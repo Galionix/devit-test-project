@@ -1,0 +1,21 @@
+# version:
+services:
+  redis:
+    image: redis
+    ports:
+      - "${BULL_REDIS_PORT}:6379"
+    environment:
+      - REDIS_PASSWORD=${BULL_REDIS_PASSWORD}
+    volumes:
+      - ./redis-data:/data
+  db:
+    image: postgres:15.1-alpine
+    # restart: always
+    environment:
+      POSTGRES_USER: ${TYPEORM_USERNAME}
+      POSTGRES_PASSWORD: ${TYPEORM_PASSWORD}
+      POSTGRES_DB: ${TYPEORM_DATABASE}
+    volumes:
+      - ./postgres-data:/data
+    ports:
+      - ${TYPEORM_PORT}:5432
