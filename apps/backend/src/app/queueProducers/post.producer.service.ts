@@ -1,17 +1,24 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bull';
 import { ArticleType } from '@devit-test-project/library';
 
-@Injectable()
-export class PostProducerService{
-    constructor(
-        // inject the queue
-        @InjectQueue('posts-queue') private readonly postQueue: Queue,
-    ) { }
+const logger = new Logger('PostProducerService');
 
-    async addPost(post: ArticleType) {
-        await this.postQueue.add('post-job', post,
-        );
+@Injectable()
+export class PostProducerService {
+  constructor(
+    // inject the queue
+    @InjectQueue('posts-queue') private readonly postQueue: Queue
+  ) {}
+
+  async addPost(post: ArticleType) {
+    logger.verbose('Adding post to queue');
+    try {
+      await this.postQueue.add('post-job', post);
+    } catch (error) {
+      logger.error(error);
     }
+    logger.verbose('Done adding post to queue');
+  }
 }

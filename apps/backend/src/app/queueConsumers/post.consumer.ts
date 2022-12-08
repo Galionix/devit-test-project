@@ -2,9 +2,11 @@
 // import Parser from 'rss-parser';
 import { ArticleType } from '@devit-test-project/library';
 import { Process, Processor } from '@nestjs/bull';
+import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { PostService } from '../entities/post/post.service';
 
+const logger = new Logger('PostConsumerService');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Parser = require('rss-parser');
 
@@ -14,14 +16,13 @@ const Parser = require('rss-parser');
 // }
 
 const getLatestDate = (articles: ArticleType[]) => {
-const articlesDates = articles
-.map((article) => new Date(article.isoDate))
-console.log('articlesDates: ', articlesDates);
+  const articlesDates = articles.map((article) => new Date(article.isoDate));
+  logger.log('articlesDates: ', articlesDates);
 
-const newestArticleDate =  articlesDates.sort((a, b) =>{
-  return b.getTime() - a.getTime();})[0]
-console.log('newestArticleDate: ', newestArticleDate);
-
+  const newestArticleDate = articlesDates.sort((a, b) => {
+    return b.getTime() - a.getTime();
+  })[0];
+  logger.log('newestArticleDate: ', newestArticleDate);
 
   return newestArticleDate;
 };
@@ -35,7 +36,7 @@ const getArticlesLaterThanDate = (articles: ArticleType[], date: Date) => {
 const processArticles = (
   postService: PostService,
   articles: ArticleType[],
-  currentLatestDate: Date,
+  currentLatestDate: Date
 ) => {
   const latestArticles = getArticlesLaterThanDate(articles, currentLatestDate);
 
@@ -48,23 +49,23 @@ const processArticles = (
       };
       await postService.create(withPopulatedDates);
     });
-    console.log(
+    logger.log(
       `
         NEW LATEST ARTICLES!!!!!!!!!!
         NEW LATEST ARTICLES!!!!!!!!!!
         NEW LATEST ARTICLES!!!!!!!!!!
 
         latestArticles.length`,
-      latestArticles.length,
+      latestArticles.length
     );
   }
 
   const newLatestDate =
-  latestArticles.length > 0
-  ? getLatestDate(latestArticles)
+    latestArticles.length > 0
+      ? getLatestDate(latestArticles)
       : currentLatestDate;
 
-  console.log('newLatestDate: ', newLatestDate);
+  logger.warn('newLatestDate: ', newLatestDate);
 
   return {
     latestArticles,
@@ -81,7 +82,9 @@ export const parseRss = async (): Promise<ArticleType[]> => {
   // }
   // }
 
-  const feed = await parser.parseURL('https://www.reddit.com/r/programming/.rss');
+  const feed = await parser.parseURL(
+    'https://www.reddit.com/r/programming/.rss'
+  );
   // const feed = await parser.parseString(redditProgrammingRss);
   //
 
@@ -99,7 +102,7 @@ export class PostConsumer {
   @Process('post-job')
   async postJob(job: Job<unknown>) {
     try {
-      console.log('-----\\---post job started');
+      logger.verbose('-----\\---post job started');
       // Initialize newestDate if it's null
       if (!this.newestDate) {
         const latestPost = await this.postService.getLatest();
@@ -107,7 +110,7 @@ export class PostConsumer {
 
         if (latestPost) this.newestDate = latestPost.pubDate;
       }
-      console.log('this.newestDate: ', this.newestDate);
+      logger.verbose('this.newestDate: ', this.newestDate);
 
       const articles = await parseRss();
       // const dates = articles.map((article) => article.isoDate);
@@ -118,13 +121,12 @@ export class PostConsumer {
       this.newestDate = processArticles(
         this.postService,
         articles,
-        new Date(this.newestDate),
+        new Date(this.newestDate)
       ).newLatestDate;
 
-      console.log('----//----post job ended');
-	} catch (error) {
-		console.error('error: ', error);
-
-	}
+      logger.verbose('----//----post job ended');
+    } catch (error) {
+      logger.error('error: ', error);
+    }
   }
 }

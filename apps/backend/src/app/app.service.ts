@@ -16,6 +16,7 @@ export class AppService {
   @Cron(CronExpression.EVERY_30_SECONDS)
   async getHello() {
 	logger.verbose('Fetching posts...')
-    this.postProducerService.addPost(null)
+	  await this.postProducerService.addPost(null);
+    logger.verbose('Done fetching posts');
   }
 }

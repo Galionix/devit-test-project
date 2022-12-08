@@ -14,6 +14,9 @@ import { PostEntity } from './entities/post.entity';
 import { PostModule } from './entities/post/post.module';
 import { PostConsumer } from './queueConsumers/post.consumer';
 import { PostProducerService } from './queueProducers/post.producer.service';
+import { UsersModule } from './users/users.module';
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
@@ -73,6 +76,8 @@ import { PostProducerService } from './queueProducers/post.producer.service';
       isGlobal: true,
       // envFilePath: '.env'
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
@@ -81,6 +86,7 @@ import { PostProducerService } from './queueProducers/post.producer.service';
     AppService,
     PostProducerService,
     PostConsumer,
+    AuthService,
   ],
   // exports: [
   //   BullModule, // <— this is important!
