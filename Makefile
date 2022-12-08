@@ -1,8 +1,10 @@
-start: docker project
+all: nx-serve
 
-docker:
-	docker-compose down
-	docker-compose up
+nx-serve:
+	npm run start-app
 
-project:
-	npm run start
+# docker:
+# 	docker-compose up
+
+# frontend:
+# 	nx run frontend:serve:development --port=3000

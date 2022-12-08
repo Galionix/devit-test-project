@@ -1,7 +1,5 @@
 /* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { Field, InputType } from '@nestjs/graphql';
-import { ISearchOptions } from 'backend/src/app/entities/post/post.service';
-import { Article } from 'backend/src/assets/article.type';
 
 @InputType('get_all_posts_input')
 export class GetAllPostsInput {

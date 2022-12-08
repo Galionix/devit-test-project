@@ -10,10 +10,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { PostEntity } from 'backend/src/app/entities/post.entity';
-import { PostModule } from 'backend/src/app/entities/post/post.module';
-import { PostConsumer } from 'backend/src/app/queueConsumers/post.consumer';
-import { PostProducerService } from 'backend/src/app/queueProducers/post.producer.service';
+import { PostEntity } from './entities/post.entity';
+import { PostModule } from './entities/post/post.module';
+import { PostConsumer } from './queueConsumers/post.consumer';
+import { PostProducerService } from './queueProducers/post.producer.service';
 
 @Module({
 	imports: [

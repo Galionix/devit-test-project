@@ -6,9 +6,10 @@ import { PostEntity } from '../post.entity';
 import { Repository } from 'typeorm';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
-import {Article} from '../../../assets/article.type';
+import {Article} from '../../../types/article.type';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { GetAllPostsInput } from 'backend/src/app/entities/post/dto/get-all-posts.input';
+import { GetAllPostsInput } from './dto/get-all-posts.input';
+import { GetPostByIdInput } from './dto/get-post-by-id.input';
 
 export interface ISearchOptions{
 	limit: number
@@ -79,7 +80,8 @@ export class PostService {
     // })
   }
 
-  async getOnePost(id: string) {
+  async getOnePost(input: GetPostByIdInput) {
+	const { id } = input
     return await this.postRepository.findOne({
       where: { id },
     })

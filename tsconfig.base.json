@@ -10,13 +10,14 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2021", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-			"backend/*": ["apps/backend/*"]
-	}
+      "@devit-test-project/library": ["libs/library/src/index.ts"],
+      "backend/*": ["apps/backend/*"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

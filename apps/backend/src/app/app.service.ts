@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { PostService } from 'backend/src/app/entities/post/post.service';
-import { PostProducerService } from 'backend/src/app/queueProducers/post.producer.service';
+import { PostService } from './entities/post/post.service';
+import { PostProducerService } from './queueProducers/post.producer.service';
 
 
 const logger = new Logger('AppService');

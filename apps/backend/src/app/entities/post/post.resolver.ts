@@ -1,11 +1,10 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
 import { Args, Query, Resolver } from '@nestjs/graphql';
-import { GetAllPostsInput } from 'backend/src/app/entities/post/dto/get-all-posts.input';
+import { GetAllPostsInput } from './dto/get-all-posts.input';
 import { PostEntity } from '../post.entity';
-// import { PostEntity } from 'backend/src/app/entities/post.entity';
 // import { PostType } from 'src/post/post.type';
 import { PostService } from './post.service';
 import {ISearchOptions} from './post.service'
+import { GetPostByIdInput } from './dto/get-post-by-id.input';
 
 @Resolver(() => PostEntity)
 export class PostResolver {
@@ -45,9 +44,18 @@ export class PostResolver {
   // }
 
   @Query(
-    returns => PostEntity
+    returns => PostEntity, {nullable: true}
   )
   getLatest() {
     return this.postService.getLatest();
   }
+
+	@Query(
+		returns => PostEntity, {nullable: true}
+	)
+	getOnePost(
+		@Args('input') input: GetPostByIdInput
+	) {
+		return this.postService.getOnePost(input);
+	}
 }

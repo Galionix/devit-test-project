@@ -1,0 +1,22 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+.container {
+  input {
+	padding: 5px;
+	border-radius: 5px;
+	width: 100%;
+	text-align: center;
+  }
+}
+.searchGroup{
+	display: flex;
+	gap: 10px;
+	button{
+		width: 100px;
+	}
+}

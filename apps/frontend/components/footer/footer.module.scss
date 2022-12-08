@@ -1,0 +1,23 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+.container{
+	height: 100px;
+	border-top: 1px dashed gray;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px;
+
+	aside{
+
+		@media screen and (max-width: 1199px) {
+			display: none;
+		}
+	}
+
+}

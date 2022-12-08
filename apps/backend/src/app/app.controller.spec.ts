@@ -1,9 +1,9 @@
+import { ArticleType } from '@devit-test-project/library';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PostProducerService } from 'backend/src/app/queueProducers/post.producer.service';
-import { Article } from 'backend/src/assets/article.type';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PostProducerService } from './queueProducers/post.producer.service';
 
 describe('AppController', () => {
   let app: TestingModule;
@@ -18,7 +18,7 @@ describe('AppController', () => {
 	describe('getData', () => {
 		it('should return the same article that was sent', () => {
 			const appController = app.get<AppController>(AppController);
-			const article: Article = {
+			const article: ArticleType = {
 				    title: 'My first script in a while, a Powershell MSI extractor!',
 				    link: 'https://www.reddit.com/r/programming/comments/yzk53r/my_first_script_in_a_while_a_powershell_msi/',
 				    pubDate: '2022-11-19T19:37:44.000Z',

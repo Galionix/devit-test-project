@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { PostProducerService } from 'backend/src/app/queueProducers/post.producer.service';
-import { Article } from 'backend/src/assets/article.type';
+import { PostProducerService } from './queueProducers/post.producer.service';
 import { AppService } from './app.service';
+import { ArticleType } from '@devit-test-project/library';
 
 @Controller()
 export class AppController {
@@ -16,7 +16,7 @@ export class AppController {
   // }
 
   @Get('send-post')
-  addPost(@Query('post') post: Article) {
+  addPost(@Query('post') post: ArticleType) {
     this.postProducerService.addPost(post);
     return post;
   }

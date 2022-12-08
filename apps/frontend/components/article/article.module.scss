@@ -1,0 +1,30 @@
+/*
+ * Replace this with your own classes
+ *
+ * e.g.
+ * .container {
+ * }
+*/
+article.container{
+	box-sizing: border-box;
+	display: grid;
+	grid-template-columns: 176px 100px;
+	border-radius: 5px;
+	background-color: rgba(0, 0, 95, 0.63);
+	padding: 10px;
+	border: 2px solid transparent;
+	&:hover{
+		border: 2px solid rgba(255, 215, 130, 0.801);
+
+	}
+	.title{
+		grid-column: 1/-1;
+	}
+	color: white;
+	a{
+		font-weight: bold;
+		&:hover{
+			color: rgba(255, 215, 130, 0.801);
+		}
+	}
+}

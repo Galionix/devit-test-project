@@ -1,9 +1,10 @@
 
 // import Parser from 'rss-parser';
+import { ArticleType } from '@devit-test-project/library';
 import { Process, Processor } from '@nestjs/bull';
-import { PostService } from 'backend/src/app/entities/post/post.service';
-import { Article } from 'backend/src/assets/article.type';
 import { Job } from 'bull';
+import { PostService } from '../entities/post/post.service';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Parser = require('rss-parser');
 
@@ -12,7 +13,7 @@ const Parser = require('rss-parser');
 //   pubDate: Date;
 // }
 
-const getLatestDate = (articles: Article[]) => {
+const getLatestDate = (articles: ArticleType[]) => {
 const articlesDates = articles
 .map((article) => new Date(article.isoDate))
 console.log('articlesDates: ', articlesDates);
@@ -25,7 +26,7 @@ console.log('newestArticleDate: ', newestArticleDate);
   return newestArticleDate;
 };
 
-const getArticlesLaterThanDate = (articles: Article[], date: Date) => {
+const getArticlesLaterThanDate = (articles: ArticleType[], date: Date) => {
   return articles.filter((article) => {
     return new Date(article.pubDate) > date;
   });
@@ -33,7 +34,7 @@ const getArticlesLaterThanDate = (articles: Article[], date: Date) => {
 
 const processArticles = (
   postService: PostService,
-  articles: Article[],
+  articles: ArticleType[],
   currentLatestDate: Date,
 ) => {
   const latestArticles = getArticlesLaterThanDate(articles, currentLatestDate);
@@ -71,7 +72,7 @@ const processArticles = (
   };
 };
 
-export const parseRss = async (): Promise<Article[]> => {
+export const parseRss = async (): Promise<ArticleType[]> => {
   const parser = new Parser();
   // {
   // customFields: {
@@ -87,7 +88,7 @@ export const parseRss = async (): Promise<Article[]> => {
   // feed.items.forEach((item) => {
   //
   // })
-  return feed.items as Article[];
+  return feed.items as ArticleType[];
 };
 
 @Processor('posts-queue')

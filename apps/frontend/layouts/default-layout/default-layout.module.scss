@@ -1,0 +1,7 @@
+section.container{
+	min-height: calc(100vh - 200px);
+	padding: 10px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
