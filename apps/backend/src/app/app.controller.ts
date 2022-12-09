@@ -13,6 +13,7 @@ import { ArticleType } from '@devit-test-project/library';
 import { User, UserBasicInfo } from './users/users.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 export interface ILoginResponse {
   access_token: string;
@@ -38,6 +39,11 @@ export class AppController {
     return post;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('protected')
+  getHello(@Request() req): string {
+    return req.user;
+  }
   //   @Get('delete-file')
   //   async deleteFile(@Query('fileName') filename: string) {
   //     console.log('filename: ', filename);

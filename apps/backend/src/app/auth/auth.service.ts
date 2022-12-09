@@ -7,6 +7,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { ILoginResponse } from '../app.controller';
 
+export type AuthPayload = {
+  name: string;
+  sub: string;
+};
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -30,7 +35,7 @@ export class AuthService {
   }
 
   async login(user: User): Promise<ILoginResponse> {
-    const payload = {
+    const payload: AuthPayload = {
       name: user.name,
       sub: user.id,
     };
