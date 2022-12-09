@@ -12,7 +12,7 @@ export type User = UserBasicInfo & UserExtendedInfo;
 
 @Injectable()
 export class UsersService {
-  //TODO: replace with DB
+  //TODO: login: replace with DB
   private readonly users: User[] = [
     {
       id: '1',

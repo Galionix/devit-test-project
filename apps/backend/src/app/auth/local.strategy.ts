@@ -6,7 +6,7 @@ import { Strategy } from 'passport-local';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    // WARN: super() must be called before any other statement
+    // WARN: login: super() must be called before any other statement
     //   this is a place where you can configure the strategy
     super();
   }

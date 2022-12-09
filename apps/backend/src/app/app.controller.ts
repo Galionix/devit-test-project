@@ -12,18 +12,24 @@ import { AppService } from './app.service';
 import { ArticleType } from '@devit-test-project/library';
 import { User, UserBasicInfo } from './users/users.service';
 import { LocalAuthGuard } from './auth/local-auth.guard';
+import { AuthService } from './auth/auth.service';
+
+export interface ILoginResponse {
+  access_token: string;
+}
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
+    private readonly authService: AuthService,
     private readonly postProducerService: PostProducerService
   ) {}
 
   @UseGuards(LocalAuthGuard) //triggers local-auth.guard.ts which triggers local.strategy.ts
   @Post('login')
-  async login(@Request() req): Promise<UserBasicInfo> {
-    return req.user;
+  // TODO: login: extract type to library
+  login(@Request() req): Promise<ILoginResponse> {
+    return this.authService.login(req.user);
   }
 
   @Get('send-post')

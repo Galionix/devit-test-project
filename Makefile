@@ -6,5 +6,4 @@ nx-serve:
 docker:
 	docker-compose up
 
-# frontend:
-# 	nx run frontend:serve:development --port=3000
+dev: docker nx-serve

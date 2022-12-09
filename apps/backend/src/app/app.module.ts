@@ -17,20 +17,21 @@ import { PostProducerService } from './queueProducers/post.producer.service';
 import { UsersModule } from './users/users.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+// import { JwtService } from '@nestjs/jwt';
 
 @Module({
-	imports: [
-		// BullModule.forRoot({
-		// 	redis: {
-		// 	  host: 'localhost',
-		// 	  port: 6379,
-		// 	},
-		//   }),
-		//   BullModule.registerQueue(
-		// 	{
-		// 	  name: 'posts-queue',
-		// 	},
-		//   ),
+  imports: [
+    // BullModule.forRoot({
+    // 	redis: {
+    // 	  host: 'localhost',
+    // 	  port: 6379,
+    // 	},
+    //   }),
+    //   BullModule.registerQueue(
+    // 	{
+    // 	  name: 'posts-queue',
+    // 	},
+    //   ),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -38,7 +39,7 @@ import { AuthModule } from './auth/auth.module';
         redis: {
           host: configService.get('BULL_REDIS_HOST'),
           port: configService.get('BULL_REDIS_PORT'),
-        //   password: configService.get('BULL_REDIS_PASSWORD'),
+          //   password: configService.get('BULL_REDIS_PASSWORD'),
         },
       }),
     }),
@@ -86,7 +87,7 @@ import { AuthModule } from './auth/auth.module';
     AppService,
     PostProducerService,
     PostConsumer,
-    AuthService,
+    // AuthService,
   ],
   // exports: [
   //   BullModule, // <— this is important!
