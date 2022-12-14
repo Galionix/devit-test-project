@@ -72,7 +72,6 @@ export default function Post() {
       .replace('&#32; submitted by &#32; ', '')
       .replace(/<a href/g, '<a target="_blank" href')
   );
-  console.log('injectHtml: ', injectHtml);
   return (
     <DefaultLayout>
       <h1>{title}</h1>

@@ -9,7 +9,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly config: ConfigService) {
     // here we provide configuration for JWT strategy
     super({
-      // TODO: login: extract to env file
       secretOrKey: config.get('JWT_SECRET'),
       ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

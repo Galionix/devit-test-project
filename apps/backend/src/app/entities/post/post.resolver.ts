@@ -5,19 +5,19 @@ import { PostEntity } from '../post.entity';
 import { PostService } from './post.service';
 import {ISearchOptions} from './post.service'
 import { GetPostByIdInput } from './dto/get-post-by-id.input';
+import { CacheControl } from 'nestjs-gql-cache-control';
 
 @Resolver(() => PostEntity)
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
-	@Query(() => [PostEntity])
-	async posts(
-		@Args('options') options: GetAllPostsInput
-	) {
-		const res = await this.postService.getAllPosts(options);
-		console.log('res: ', res);
-		return res[0]
-	}
+  @Query(() => [PostEntity])
+  @CacheControl({ maxAge: 30 })
+  async posts(@Args('options') options: GetAllPostsInput) {
+    const res = await this.postService.getAllPosts(options);
+    console.log('res: ', res);
+    return res[0];
+  }
   // @Mutation(() => Post)
   // createPost(@Args('createPostInput') createPostInput: CreatePostInput) {
   //   return this.postService.create(createPostInput);
@@ -43,19 +43,15 @@ export class PostResolver {
   //   return this.postService.remove(id);
   // }
 
-  @Query(
-    returns => PostEntity, {nullable: true}
-  )
+  @Query((returns) => PostEntity, { nullable: true })
+  @CacheControl({ inheritMaxAge: true })
   getLatest() {
     return this.postService.getLatest();
   }
 
-	@Query(
-		returns => PostEntity, {nullable: true}
-	)
-	getOnePost(
-		@Args('input') input: GetPostByIdInput
-	) {
-		return this.postService.getOnePost(input);
-	}
+  @Query((returns) => PostEntity, { nullable: true })
+  @CacheControl({ inheritMaxAge: true })
+  getOnePost(@Args('input') input: GetPostByIdInput) {
+    return this.postService.getOnePost(input);
+  }
 }

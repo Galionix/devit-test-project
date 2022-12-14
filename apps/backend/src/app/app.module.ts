@@ -1,5 +1,6 @@
 import { BullModule } from '@nestjs/bull';
-import { Module } from '@nestjs/common';
+import { Module, CacheModule, CacheInterceptor } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,6 +19,8 @@ import { UsersModule } from './users/users.module';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 // import { JwtService } from '@nestjs/jwt';
+import responseCachePlugin from 'apollo-server-plugin-response-cache';
+import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/cacheControl';
 
 @Module({
   imports: [
@@ -68,6 +71,10 @@ import { AuthModule } from './auth/auth.module';
       autoSchemaFile: true,
       sortSchema: true,
       playground: true,
+      plugins: [
+        ApolloServerPluginCacheControl({ defaultMaxAge: 5 }), // optional
+        responseCachePlugin(),
+      ],
     }),
 
     ScheduleModule.forRoot(),
