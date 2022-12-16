@@ -1,4 +1,4 @@
-import { ArticleType } from './article.type';
+import { ArticleType } from './types/article.type';
 
 export const mockData = `
 <?xml version="1.0" encoding="UTF-8"?>
@@ -563,5 +563,5 @@ export const parsedMockData: ArticleType[] = [
       '&#32; submitted by &#32; <a href="https://www.reddit.com/user/JerryX32"> /u/JerryX32 </a> <br/> <span><a href="https://www.theregister.com/AMP/2022/12/02/ml_attention_center_model_freed/">[link]</a></span> &#32; <span><a href="https://www.reddit.com/r/programming/comments/zas3pa/google_frees_nifty_ml_imagecompression_model_but/">[comments]</a></span>',
     link: 'https://www.reddit.com/r/programming/comments/zas3pa/google_frees_nifty_ml_imagecompression_model_but/',
     contentSnippet: 'submitted by    /u/JerryX32  \n [link]   [comments]',
-  }
+  },
 ];

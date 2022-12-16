@@ -10,14 +10,12 @@ import {
 import { PostProducerService } from './queueProducers/post.producer.service';
 import { AppService } from './app.service';
 import { ArticleType } from '@devit-test-project/library';
-import { User, UserBasicInfo } from './users/users.service';
+import { User, UserBasicInfo } from '@devit-test-project/library';
 import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { ILoginResponse } from '@devit-test-project/library';
 
-export interface ILoginResponse {
-  access_token: string;
-}
 
 @Controller()
 export class AppController {

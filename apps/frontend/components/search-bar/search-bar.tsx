@@ -207,7 +207,7 @@ export function SearchBar(props: SearchBarProps) {
                   fontSize: 16,
                 }}
               >
-                Search for {debouncedSearch} didn&apos;t return went well
+                Search didn&apos;t went well
               </Text>
             </Paragraph>
             <Paragraph>

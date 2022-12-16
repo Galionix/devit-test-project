@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import {
-  User,
-  UserBasicInfo,
-  UsersService,
-} from '../../app/users/users.service';
+import { UsersService } from '../../app/users/users.service';
+import { User, UserBasicInfo } from '@devit-test-project/library';
 import { JwtService } from '@nestjs/jwt';
-import { ILoginResponse } from '../app.controller';
+import { ILoginResponse } from '@devit-test-project/library';
+import { ConfigService } from '@nestjs/config';
 
 export type AuthPayload = {
   name: string;
@@ -16,7 +14,8 @@ export type AuthPayload = {
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private JwtService: JwtService
+    private JwtService: JwtService,
+    private readonly configService: ConfigService
   ) {}
 
   async validateUser(
@@ -39,8 +38,14 @@ export class AuthService {
       name: user.name,
       sub: user.id,
     };
+
+    const expire = new Date();
+    expire.setSeconds(
+      expire.getSeconds() + parseInt(this.configService.get('JWT_EXPIRE'))
+    );
     return {
       access_token: this.JwtService.sign(payload),
+      expire,
     };
   }
 }

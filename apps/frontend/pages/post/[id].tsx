@@ -8,7 +8,7 @@ import DefaultLayout from '../../layouts/default-layout/default-layout';
 import s from './[id].module.scss';
 import Iframe from 'react-iframe';
 
-const parseLink = (content: string) => {
+export const parseLink = (content: string) => {
   // const highlightedLinks = content.replaceAll('<a', `
   // <a`);
 

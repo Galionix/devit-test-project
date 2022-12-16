@@ -1,14 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { User } from '@devit-test-project/library';
 
-export type UserBasicInfo = {
-  id: string;
-  name: string;
-};
-export type UserExtendedInfo = {
-  username: string;
-  password: string;
-};
-export type User = UserBasicInfo & UserExtendedInfo;
 
 @Injectable()
 export class UsersService {

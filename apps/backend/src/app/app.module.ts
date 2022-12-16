@@ -67,6 +67,10 @@ import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/c
       }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      //   cors: {
+      //     origin: 'http://localhost:3000',
+      //     credentials: true,
+      //   },
       driver: ApolloDriver,
       autoSchemaFile: true,
       sortSchema: true,
