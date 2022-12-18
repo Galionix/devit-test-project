@@ -1,13 +1,18 @@
 import { useEffect } from 'react';
 import DefaultLayout from '../../layouts/default-layout/default-layout';
 import styles from './index.module.scss';
-import { useAdminStoreStore } from './admin.store';
 import LoginButton from '../../components/login-button/login-button';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { Table } from 'antd';
+import { Table, message } from 'antd';
 import AddPostModal from '../../components/add-post-modal/add-post-modal';
-import { useServerRequest } from '../../hooks/useServerRequest';
+import { useAuthorizedRequest } from '../../hooks/useServerRequest';
+import { HeadComponent } from '../../components/head/head';
+import client from '../../apollo-client';
+import { gql } from '@apollo/client';
+import { ArticleType } from '@devit-test-project/library';
+import { SearchBar } from '../../components/search-bar/search-bar';
+import AdminDisplayPosts from '../../components/admin-display-posts/admin-display-posts';
 
 const dataSource = [
   {
@@ -41,43 +46,88 @@ const columns = [
     key: 'address',
   },
 ];
+type TSortDirection = 'ASC' | 'DESC';
+
+interface IQueryProps {
+  searchText: string;
+  sortDirection: TSortDirection;
+}
+
+export async function getStaticProps() {
+  const { data } = await client.query({
+    query: gql`
+      query {
+        posts(options: {}) {
+          id
+          pubDate
+          title
+          author
+          content
+          link
+          contentSnippet
+        }
+      }
+    `,
+  });
+
+  return {
+    props: {
+      posts: data.posts,
+    },
+    revalidate: 1,
+  };
+}
+interface AdminProps {
+  posts: ArticleType[];
+}
 
 /* eslint-disable-next-line */
-export interface AdminProps {}
 
 export function Admin(props: AdminProps) {
   const session = useSession();
-  console.log('session: ', session);
+
   const router = useRouter();
 
-  //   useEffect(() => {
-  //     const checkProtected = async () => {
-  //       if (!session.data) return;
-  //       console.log('session.data.user.token: ', session.data.user.token);
-  //       const response = await checkLogin(session.data.user.token);
-  //     };
-  //     checkProtected();
-  //   }, [session.status]);
+  const data = useAuthorizedRequest('protected', 'GET', {});
 
-  const authState = useServerRequest('http://localhost:3002/api/protected');
-  console.log('authState: ', authState);
+  //   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
+    console.log('session.status: ', session.status);
     if (session.status !== 'authenticated') {
+      //   messageApi.open({
+      //     type: 'warning',
+      //     content: 'You logged out or session expired',
+      //     duration: 30,
+      //   });
+
       router.push('/login');
     }
   }, [router, session.status]);
 
+  if (session.status === 'loading' || session.status === 'unauthenticated') {
+    return (
+      <DefaultLayout>
+        <HeadComponent title="Loading..." />
+        <p>Loading...</p>
+      </DefaultLayout>
+    );
+  }
+
+  console.log('session.status: ', session.status);
   return (
     <DefaultLayout>
+      <HeadComponent title="Admin Page" />
+      {/* {contextHolder} */}
       <AddPostModal />
       <div className={styles['container']}>
         <LoginButton />
-        <h1>Welcome to Admin!</h1>
-        <pre>{JSON.stringify(session, null, 2)}</pre>
+        {/* <h1>Welcome to Admin!</h1> */}
+        {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
+        {/* <SearchBar initialPosts={props.posts} /> */}
+        <AdminDisplayPosts />
       </div>
-
-      <Table dataSource={dataSource} columns={columns} />
+      {/* <Table dataSource={dataSource} columns={columns} /> */}
     </DefaultLayout>
   );
 }

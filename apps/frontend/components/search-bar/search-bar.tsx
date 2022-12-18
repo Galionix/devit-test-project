@@ -7,6 +7,7 @@ import { useFoundPostsStore } from './post-search.store';
 import { ArticlePreview } from '../article/article';
 import { Button, Result, Space, Spin, Typography } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { HeadComponent } from '../head/head';
 
 const { Paragraph, Text } = Typography;
 
@@ -15,6 +16,7 @@ interface IQueryProps {
   searchText: string;
   sortDirection: TSortDirection;
 }
+
 const QUERY = ({ searchText, sortDirection }: IQueryProps) => gql`
 query{
 	posts(
@@ -161,6 +163,7 @@ export function SearchBar(props: SearchBarProps) {
 
   return (
     <div className={s['container']}>
+      {search !== '' && <HeadComponent title={`${search} - search`} />}
       <div className={s['searchGroup']}>
         <input
           type="search"

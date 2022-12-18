@@ -47,7 +47,13 @@ const processArticles = (
         pubDate: new Date(article.pubDate),
         isoDate: new Date(article.isoDate),
       };
-      await postService.create(withPopulatedDates);
+      const exists = await postService.getOnePost(withPopulatedDates)[0][0];
+      logger.log('exists: ', exists);
+      //   const exists = !!(await postService.getOnePost(withPopulatedDates));
+      if (!exists) {
+        logger.log('Creating new post: ', withPopulatedDates.title, '...');
+        await postService.create(withPopulatedDates);
+      }
     });
     logger.log(
       `
@@ -106,6 +112,7 @@ export class PostConsumer {
       // Initialize newestDate if it's null
       if (!this.newestDate) {
         const latestPost = await this.postService.getLatest();
+
         console.log('latestPost: ', latestPost);
 
         if (latestPost) this.newestDate = latestPost.pubDate;

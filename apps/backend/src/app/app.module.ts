@@ -46,6 +46,7 @@ import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/c
         },
       }),
     }),
+
     BullModule.registerQueue({
       name: 'posts-queue',
     }),
@@ -62,8 +63,9 @@ import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/c
         database: config.get<string>('TYPEORM_DATABASE'),
         entities: [PostEntity],
         synchronize: true,
+        // dropSchema: true,
         autoLoadEntities: true,
-        logging: true,
+        // logging: true,
       }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({

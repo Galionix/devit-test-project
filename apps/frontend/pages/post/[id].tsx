@@ -7,6 +7,9 @@ import Header from '../../components/header/header';
 import DefaultLayout from '../../layouts/default-layout/default-layout';
 import s from './[id].module.scss';
 import Iframe from 'react-iframe';
+import { Button } from 'antd';
+import { CaretLeftOutlined } from '@ant-design/icons';
+import { HeadComponent } from '../../components/head/head';
 
 export const parseLink = (content: string) => {
   // const highlightedLinks = content.replaceAll('<a', `
@@ -47,7 +50,6 @@ query {
 `;
 
 export default function Post() {
-  // { post }: { post: ArticleType }
   const router = useRouter();
   const { id } = router.query;
 
@@ -56,6 +58,7 @@ export default function Post() {
   if (loading || !data || !data.getOnePost) {
     return (
       <DefaultLayout>
+        <HeadComponent title="Loading..." />
         <h2>Loading...</h2>
       </DefaultLayout>
     );
@@ -74,6 +77,17 @@ export default function Post() {
   );
   return (
     <DefaultLayout>
+      <HeadComponent title={title} />
+      <Button
+        block={false}
+        icon={<CaretLeftOutlined />}
+        type="primary"
+        onClick={() => {
+          router.push('/');
+        }}
+      >
+        Back
+      </Button>
       <h1>{title}</h1>
       <div
         className={s['links']}

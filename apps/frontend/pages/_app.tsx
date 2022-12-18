@@ -5,7 +5,7 @@ import { ApolloProvider } from '@apollo/client';
 import client from '../apollo-client';
 import { useState, useEffect } from 'react';
 import { SessionProvider } from 'next-auth/react';
-
+import { HeadComponent } from '../components/head/head';
 
 function CustomApp({
   Component,
@@ -26,9 +26,7 @@ function CustomApp({
 
   return (
     <>
-      <Head>
-        <title>Welcome to frontend!</title>
-      </Head>
+      <HeadComponent title="Home" />
       <main className="app">
         <ApolloProvider client={client}>
           <SessionProvider session={session}>

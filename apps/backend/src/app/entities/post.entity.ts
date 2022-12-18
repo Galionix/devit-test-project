@@ -20,8 +20,7 @@ export type Article = {
 @ObjectType('posts')
 @Entity('posts')
 export class PostEntity {
-
-  @Field(() => ID)
+  @Field(() => ID, { nullable: true })
   @PrimaryGeneratedColumn()
   order: number;
 
