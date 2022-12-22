@@ -17,7 +17,6 @@ export class PostResolver {
   @Query(() => PostPaginationEntity)
   @CacheControl({ maxAge: 30 })
   async posts(@Args('options') options: GetAllPostsInput) {
-    console.log('options: ', options);
     const res = await this.postService.getAllPosts(options);
     return res;
   }

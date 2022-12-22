@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "start-app": "nx run-many --target=serve",
+    "build-app": "nx run-many --target=build",
     "build": "nx build",
     "test": "nx test"
   },

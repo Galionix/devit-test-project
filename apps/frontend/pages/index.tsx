@@ -5,7 +5,7 @@ import client from '../apollo-client';
 import ClientDisplayPosts from '../components/client-display-posts/client-display-posts';
 import { SearchBar } from '../components/search-bar/search-bar';
 import DefaultLayout from '../layouts/default-layout/default-layout';
-import { useIndexPageStore } from './index.store';
+import useIndexPageStore from './index.store';
 
 export async function getStaticProps() {
   const { data } = await client.query({

@@ -94,7 +94,6 @@ export class PostConsumer {
       if (!this.newestDate) {
         const latestPost = await this.postService.getLatest();
 
-        console.log('latestPost: ', latestPost);
 
         if (latestPost) this.newestDate = latestPost.pubDate;
       }

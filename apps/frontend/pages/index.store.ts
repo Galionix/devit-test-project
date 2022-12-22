@@ -6,16 +6,18 @@ interface IIndexPageProps {
   setScrollPosition: (scrollPosition: number) => void;
 }
 
-export const useIndexPageStore = create<IIndexPageProps>()(
-  persist(
-    (set, get) => ({
-      scrollPosition: 0,
-      setScrollPosition(scrollPosition) {
-        set({ scrollPosition });
-      },
-    }),
-    {
-      name: 'index-page', // unique name
-    }
-  )
-);
+ const useIndexPageStore = create<IIndexPageProps>()(
+   persist(
+     (set, get) => ({
+       scrollPosition: 0,
+       setScrollPosition(scrollPosition) {
+         set({ scrollPosition });
+       },
+     }),
+     {
+       name: 'index-page', // unique name
+     }
+   )
+ );
+
+ export default useIndexPageStore;

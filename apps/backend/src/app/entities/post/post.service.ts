@@ -40,7 +40,6 @@ export class PostService {
     const res = await this.postRepository.query(
       'SELECT * FROM "posts" ORDER BY "pubDate" desc LIMIT 1'
     );
-    console.log('res: ', res);
 
     return res[0];
   }
@@ -50,7 +49,6 @@ export class PostService {
     const res = await this.postRepository.findOne({
       where: { id },
     });
-    console.log(' getOnePost res: ', res);
     return res;
   }
 
@@ -59,7 +57,6 @@ export class PostService {
       ...defaultSearchOptions,
       ...options,
     };
-    console.log('resolvedOptions: ', resolvedOptions);
     const {
       current,
       pageSize,
@@ -88,7 +85,6 @@ export class PostService {
     const pageSizeResolved = pageSize > 100 ? 100 : pageSize;
     const offset = (current - 1) * pageSizeResolved;
 
-    console.log('total: ', total);
     query.skip(offset).take(pageSizeResolved);
 
     const res = await query.getManyAndCount();

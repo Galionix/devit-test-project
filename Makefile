@@ -2,15 +2,10 @@ all: nx-serve
 
 nx-serve:
 	npm run start-app
-# frontend:
-# 	npm run start-frontend
-# backend:
-# 	npm run start-backend
 
-docker:
-	docker-compose up
+backend:
+	npm run start
 
-dev: docker nx-serve
-
+# to build frontend backend must be running
 build:
-	npm run build
+	npm run build-app
