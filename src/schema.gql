@@ -9,7 +9,7 @@ scalar DateTime
 
 type Query {
   getLatest: [posts!]
-  getOnePost(input: get_post_by_id_input!): [posts!]
+  getOnePost(input: get_post_by_id_input!): posts
   posts(options: get_all_posts_input!): posts_pagination!
 }
 

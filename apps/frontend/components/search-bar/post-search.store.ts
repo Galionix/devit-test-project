@@ -13,7 +13,13 @@ interface ISearchResultStore {
 export const useFoundPostsStore = create<ISearchResultStore>()(
   persist(
     (set, get) => ({
-      status: { posts: [], loading: false, error: null, keyword: '' },
+      status: {
+        posts: [],
+        loading: false,
+        error: null,
+        searchAuthor: '',
+        searchTitle: '',
+      },
       prevLoadedPosts: [],
       setStatus: (status: ISearchResult) => set({ status }),
       setPrevLoadedPosts: (prevLoadedPosts: ArticleType[]) =>

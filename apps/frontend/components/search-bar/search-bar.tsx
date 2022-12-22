@@ -13,25 +13,33 @@ const { Paragraph, Text } = Typography;
 
 type TSortDirection = 'ASC' | 'DESC';
 interface IQueryProps {
-  searchText: string;
+  searchTitle: string;
+  searchAuthor: string;
   sortDirection: TSortDirection;
 }
 
-const QUERY = ({ searchText, sortDirection }: IQueryProps) => gql`
+const QUERY = ({
+  searchTitle,
+  searchAuthor,
+  sortDirection,
+}: IQueryProps) => gql`
 query{
 	posts(
 	  options:{
-		searchText:"${searchText}"
+		searchTitle:"${searchTitle}"
+		searchAuthor:"${searchAuthor}"
 		sortDirection:"${sortDirection}"
 	  }
 	){
-		id
-		pubDate
-		title
-		author
-		content
-		link
-		contentSnippet
+		posts{
+			id
+			pubDate
+			title
+			author
+			content
+			link
+			contentSnippet
+		}
 	}
   }
 `;
@@ -39,7 +47,8 @@ query{
 export interface ISearchResult {
   posts: ArticleType[];
 
-  keyword: string;
+  searchTitle: string;
+  searchAuthor: string;
   loading: boolean;
   error: ApolloError;
 }
@@ -54,21 +63,26 @@ export function SearchBar(props: SearchBarProps) {
     setPrevLoadedPosts,
     prevLoadedPosts,
     setStatus,
-    status: { keyword },
+    status: searchStatus,
   } = useFoundPostsStore();
 
+  console.log('status: ', searchStatus);
+
+  const { searchAuthor, searchTitle } = searchStatus;
   const [open, setOpen] = useState(false);
 
-  const [search, setSearch] = useState(keyword);
+  const [searchQueryTitle, setSearchQueryTitle] = useState(searchTitle);
   const [sortDirection, setSortDirection] = useState<TSortDirection>('DESC');
   const [debouncedSortDirection, setDebouncedSortDirection] =
     useState<TSortDirection>('DESC');
 
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSearchQueryTitle, setDebouncedSearchQueryTitle] =
+    useState('');
 
   const { data, loading, error } = useQuery(
     QUERY({
-      searchText: `${debouncedSearch}`,
+      searchTitle: `${debouncedSearchQueryTitle}`,
+      searchAuthor: '',
       sortDirection: debouncedSortDirection,
     })
     //   ,
@@ -97,11 +111,11 @@ export function SearchBar(props: SearchBarProps) {
 
   const [, cancel] = useDebounce(
     () => {
-      setDebouncedSearch(search);
+      setDebouncedSearchQueryTitle(searchQueryTitle);
       setDebouncedSortDirection(sortDirection);
     },
     2000,
-    [search, sortDirection]
+    [searchQueryTitle, sortDirection]
   );
 
   //   const searched = debouncedSearch === '' || search === '';
@@ -113,8 +127,8 @@ export function SearchBar(props: SearchBarProps) {
   useEffect(() => {
     // FIXME: if we search every time from an empty,
     // this shows previously loaded results from another query in loading state
-    if (debouncedSearch !== '') {
-      setPrevLoadedPosts(data?.posts);
+    if (debouncedSearchQueryTitle !== '') {
+      setPrevLoadedPosts(data?.posts?.posts);
     }
     // else {
     //   setPrevLoadedPosts(initialPosts);
@@ -122,15 +136,17 @@ export function SearchBar(props: SearchBarProps) {
     //   return () => {
     // 	second
     //   }
-  }, [data?.posts, setPrevLoadedPosts, debouncedSearch]);
+  }, [data?.posts?.posts, setPrevLoadedPosts, debouncedSearchQueryTitle]);
 
   const generalLoading =
     loading ||
-    (search !== debouncedSearch && search !== '') ||
+    (searchQueryTitle !== debouncedSearchQueryTitle &&
+      searchQueryTitle !== '') ||
     sortDirection !== debouncedSortDirection;
   const status: ISearchResult = useMemo(
     () => ({
-      keyword: debouncedSearch,
+      searchTitle: debouncedSearchQueryTitle,
+      searchAuthor: '',
       //   posts:
       //     prevLoadedPosts.length > 0 && loading
       //       ? prevLoadedPosts
@@ -139,17 +155,17 @@ export function SearchBar(props: SearchBarProps) {
       //       : initialPosts,
       posts: generalLoading
         ? prevLoadedPosts
-        : search === ''
+        : searchQueryTitle === ''
         ? initialPosts
-        : data?.posts,
+        : data?.posts?.posts,
       loading: generalLoading,
       error,
     }),
     [
-      debouncedSearch,
+      debouncedSearchQueryTitle,
       generalLoading,
       prevLoadedPosts,
-      search,
+      searchQueryTitle,
       initialPosts,
       data?.posts,
       error,
@@ -157,22 +173,25 @@ export function SearchBar(props: SearchBarProps) {
   );
 
   useEffect(() => {
+    console.log('status: ', status);
     setStatus && setStatus(status);
   }, [status, setStatus]);
   //   setStatus(status);
 
   return (
     <div className={s['container']}>
-      {search !== '' && <HeadComponent title={`${search} - search`} />}
+      {searchQueryTitle !== '' && (
+        <HeadComponent title={`${searchQueryTitle} - search`} />
+      )}
       <div className={s['searchGroup']}>
         <input
           type="search"
           name=""
           id=""
-          placeholder="Search author or title"
-          value={search}
+          placeholder="Search title"
+          value={searchQueryTitle}
           onChange={(e) => {
-            setSearch(e.target.value);
+            setSearchQueryTitle(e.target.value);
             if (e.target.value === '') {
               cancel();
             }

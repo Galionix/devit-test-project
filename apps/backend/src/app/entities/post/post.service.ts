@@ -85,6 +85,7 @@ export class PostService {
     const res = await this.postRepository.findOne({
       where: { id },
     });
+    console.log(' getOnePost res: ', res);
 	  return res;
   }
 

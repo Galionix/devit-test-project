@@ -15,21 +15,24 @@ export async function getStaticProps() {
     query: gql`
       query {
         posts(options: {}) {
-          id
-          pubDate
-          title
-          author
-          content
-          link
-          contentSnippet
+          posts {
+            id
+            pubDate
+            title
+            author
+            content
+            link
+            contentSnippet
+          }
         }
       }
     `,
   });
+  console.log('data: ', data.posts.posts);
 
   return {
     props: {
-      posts: data.posts,
+      posts: data.posts.posts,
     },
     revalidate: 1,
   };

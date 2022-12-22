@@ -14,6 +14,9 @@ import { ArticleType } from '@devit-test-project/library';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import AdminDisplayPosts from '../../components/admin-display-posts/admin-display-posts';
 
+
+
+
 const dataSource = [
   {
     key: '1',
@@ -49,7 +52,7 @@ const columns = [
 type TSortDirection = 'ASC' | 'DESC';
 
 interface IQueryProps {
-  searchText: string;
+  searchTitle: string;
   sortDirection: TSortDirection;
 }
 
@@ -58,13 +61,15 @@ export async function getStaticProps() {
     query: gql`
       query {
         posts(options: {}) {
-          id
-          pubDate
-          title
-          author
-          content
-          link
-          contentSnippet
+          posts {
+            id
+            pubDate
+            title
+            author
+            content
+            link
+            contentSnippet
+          }
         }
       }
     `,
@@ -72,7 +77,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      posts: data.posts,
+      posts: data.posts.posts,
     },
     revalidate: 1,
   };

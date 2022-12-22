@@ -9,22 +9,37 @@ import type { FilterValue, SorterResult } from 'antd/es/table/interface';
 import { gql, useQuery } from '@apollo/client';
 import { ISearchOptions } from '@devit-test-project/library';
 
-const QUERY = ({ pageSize, current }: Partial<ISearchOptions>) => gql`
+const QUERY = ({
+  pageSize,
+  current,
+  sortBy = 'pubDate',
+  sortDirection = 'ASC',
+}: Partial<ISearchOptions>) => gql`
   query {
-    posts(options: {}) {
-      id
-      pubDate
-      title
-      author
-      content
-      link
-      contentSnippet
+    posts(options: {
+		sortBy: "${sortBy}"
+		sortDirection: "${sortDirection}"
+		pageSize: ${pageSize}
+		current: ${current}
+	}) {
+		posts{
+
+			id
+			pubDate
+			title
+			author
+			content
+			link
+			contentSnippet
+		}
+		total
     }
   }
 `;
 
 /* eslint-disable-next-line */
 export interface AdminDisplayPostsProps {}
+
 const columns = [
   {
     title: 'index',
@@ -47,6 +62,7 @@ const columns = [
   {
     title: 'title',
     dataIndex: 'title',
+    sorter: true,
     key: 'title',
     ellipsis: true,
   },
@@ -56,6 +72,8 @@ interface TableParams {
   sortField?: string;
   sortOrder?: string;
   filters?: Record<string, FilterValue>;
+  field?: ISearchOptions['sortBy'];
+  order?: 'ascend' | 'descend';
 }
 
 export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
@@ -73,10 +91,16 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
 
   const { data, loading, error } = useQuery(
     QUERY({
+      sortBy: tableParams?.field,
+      sortDirection: tableParams?.order === 'ascend' ? 'ASC' : 'DESC',
       pageSize: tableParams.pagination?.pageSize,
       current: tableParams.pagination?.current,
-    })
+    }),
+    {
+      pollInterval: 1000,
+    }
   );
+  console.log('total:', tableParams);
 
   // const handlePaginationChange = (page: number, pageSize?: number) => {
   // 	setTableParams({
@@ -93,7 +117,7 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
   const handleTableChange = (
     pagination: TablePaginationConfig,
     filters: Record<string, FilterValue>,
-    sorter: SorterResult<ArticleType>
+    sorter: any
   ) => {
     setTableParams({
       pagination,
@@ -106,11 +130,11 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
     //   setData([]);
     // }
   };
-  const getRandomuserParams = (params: TableParams) => ({
-    results: params.pagination?.pageSize,
-    page: params.pagination?.current,
-    ...params,
-  });
+  //   const getRandomuserParams = (params: TableParams) => ({
+  //     results: params.pagination?.pageSize,
+  //     page: params.pagination?.current,
+  //     ...params,
+  //   });
 
   //   const fetchData = () => {
   //     // setLoading(true);
@@ -142,15 +166,18 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
 
   return (
     <div className={styles['container']}>
-      <pre>{JSON.stringify(tableParams, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(tableParams, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <Table
-        dataSource={data ? data.posts : []}
+        dataSource={data ? data.posts.posts : []}
         columns={columns}
         loading={loading}
         rowKey={(record) => record.id}
-        pagination={tableParams.pagination}
+        pagination={{ ...tableParams.pagination, total: data?.posts?.total }}
         onChange={handleTableChange}
+        scroll={{
+          y: 500,
+        }}
       />
       {/* <pre>{JSON.stringify(posts, null, 2)}</pre> */}
 

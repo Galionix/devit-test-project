@@ -50,7 +50,7 @@ export class PostResolver {
     return this.postService.getLatest();
   }
 
-  @Query((returns) => [PostEntity], { nullable: true })
+  @Query((returns) => PostEntity, { nullable: true })
   @CacheControl({ inheritMaxAge: true })
   getOnePost(@Args('input') input: GetPostByIdInput) {
     return this.postService.getOnePost(input);
