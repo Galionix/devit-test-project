@@ -21,6 +21,7 @@ import { AuthModule } from './auth/auth.module';
 // import { JwtService } from '@nestjs/jwt';
 import responseCachePlugin from 'apollo-server-plugin-response-cache';
 import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/cacheControl';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -74,7 +75,7 @@ import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/c
       //     credentials: true,
       //   },
       driver: ApolloDriver,
-      autoSchemaFile: true,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
       playground: true,
       plugins: [

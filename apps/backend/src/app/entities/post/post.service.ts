@@ -9,6 +9,7 @@ import { Article } from '../../../types/article.type';
 import { GetAllPostsInput } from './dto/get-all-posts.input';
 import { GetPostByIdInput } from './dto/get-post-by-id.input';
 import { ISearchOptions } from '@devit-test-project/library';
+import { PostPaginationEntity } from '../post-pagination.entity';
 
 // export interface ISearchOptions{
 // 	limit: number
@@ -83,7 +84,7 @@ export class PostService {
     });
   }
 
-  async getAllPosts(options: GetAllPostsInput): Promise<PostEntity[]> {
+  async getAllPosts(options: GetAllPostsInput): Promise<PostPaginationEntity> {
     const resolvedOptions: ISearchOptions = {
       ...defaultSearchOptions,
       ...options,
@@ -110,16 +111,28 @@ export class PostService {
         search: `%${searchAuthor}%`,
       });
     }
+    const total = await query.getCount();
     if (sortBy) {
       query.addOrderBy(`posts.${sortBy}`, sortDirection);
     }
     const pageSizeResolved = pageSize > 100 ? 100 : pageSize;
     const offset = (current - 1) * pageSizeResolved;
+
+    console.log('total: ', total);
     query.skip(offset).take(pageSizeResolved);
 
-	  const res = await query.getManyAndCount();
-	  console.log('res: ', res);
-    return res as any;
+    const res = await query.getManyAndCount();
+
+    const preNext = total - pageSizeResolved * current;
+    const next = preNext > 0 ? preNext : 0;
+    const prev = (current - 1) * pageSizeResolved;
+
+    return {
+      posts: res[0],
+      total,
+      next,
+      prev,
+    };
 
     // return await this.postRepository.find();
   }

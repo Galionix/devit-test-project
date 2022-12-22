@@ -6,17 +6,17 @@ import { PostService } from './post.service';
 // import {ISearchOptions} from './post.service'
 import { GetPostByIdInput } from './dto/get-post-by-id.input';
 import { CacheControl } from 'nestjs-gql-cache-control';
+import { PostPaginationEntity } from '../post-pagination.entity';
 
 @Resolver(() => PostEntity)
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
-  @Query(() => [[PostEntity], Int])
+  @Query(() => PostPaginationEntity)
   @CacheControl({ maxAge: 30 })
   async posts(@Args('options') options: GetAllPostsInput) {
+    console.log('options: ', options);
     const res = await this.postService.getAllPosts(options);
-    console.log('res: ', res);
-    console.log(typeof res[1]);
     return res;
   }
   // @Mutation(() => Post)
@@ -44,13 +44,13 @@ export class PostResolver {
   //   return this.postService.remove(id);
   // }
 
-  @Query((returns) => [[PostEntity], Int], { nullable: true })
+  @Query((returns) => [PostEntity], { nullable: true })
   @CacheControl({ inheritMaxAge: true })
   getLatest() {
     return this.postService.getLatest();
   }
 
-  @Query((returns) => [[PostEntity], Int], { nullable: true })
+  @Query((returns) => [PostEntity], { nullable: true })
   @CacheControl({ inheritMaxAge: true })
   getOnePost(@Args('input') input: GetPostByIdInput) {
     return this.postService.getOnePost(input);
