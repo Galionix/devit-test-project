@@ -1,3 +1,4 @@
+import { gql, useMutation } from '@apollo/client';
 import { ArticleType, stripUsername } from '@devit-test-project/library';
 import {
   Button,
@@ -8,14 +9,11 @@ import {
   Modal,
   notification,
 } from 'antd';
-import result from 'antd/es/result';
 import dayjs from 'dayjs';
-import styles from './upadte-post-modal.module.scss';
-import { defaultTextRules, defaultTextAreaRules } from '../utils/reused';
-import { v4 as uuidv4 } from 'uuid';
-import { signOut, useSession } from 'next-auth/react';
-import { gql, useMutation } from '@apollo/client';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { signOut, useSession } from 'next-auth/react';
+import { defaultTextAreaRules, defaultTextRules } from '../utils/reused';
+import styles from './upadte-post-modal.module.scss';
 
 dayjs.extend(customParseFormat);
 
@@ -69,8 +67,6 @@ export function UpadtePostModal({ post, open, setOpen }: UpadtePostModalProps) {
     });
   };
   const onFinishFailed = (errorInfo: any) => {
-    // console.log('Failed:', errorInfo);
-
     notification.open({
       message: 'Validation error',
       description: `Please check the following fields: ${errorInfo.errorFields.map(
@@ -85,7 +81,6 @@ export function UpadtePostModal({ post, open, setOpen }: UpadtePostModalProps) {
       ...values,
     });
   };
-  console.log(post.pubDate);
   return (
     <Modal
       className={styles['container']}
@@ -99,9 +94,6 @@ export function UpadtePostModal({ post, open, setOpen }: UpadtePostModalProps) {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        //   onChange={(e) => console.log(e)}
-        //   onValuesChange={(e) => console.log(e)}
-        //   onFieldsChange={(e) => console.log(e)}
         initialValues={{ ...post, author: stripUsername(`${post.author}`) }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}

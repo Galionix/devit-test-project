@@ -1,12 +1,12 @@
 import s from './article.module.scss';
 
-import { ArticleType, stripUsername } from '@devit-test-project/library';
-import Link from 'next/link';
-import { useFoundPostsStore } from '../search-bar/post-search.store';
-import { Spin } from 'antd';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import { useState, useEffect, memo } from 'react';
+import { ArticleType, stripUsername } from '@devit-test-project/library';
+import { Spin } from 'antd';
+import Link from 'next/link';
+import { memo, useEffect, useState } from 'react';
 import { parseLink } from '../../pages/post/[id]';
+import { useFoundPostsStore } from '../search-bar/post-search.store';
 
 const PreviewResult = ({ link }: { link: string }) => {
   const [previewAvailable, setPreviewAvailable] = useState(true);
@@ -32,23 +32,13 @@ const PreviewResult = ({ link }: { link: string }) => {
       ) : previewAvailable ? (
         <>
           <EyeOutlined style={{ color: 'white' }} />
-          {/* <span>Preview available</span> */}
         </>
       ) : (
         <>
           <EyeInvisibleOutlined style={{ color: 'gray' }} />
-          {/* <span>Preview not available</span> */}
         </>
       )}
     </div>
-    // <Spin spinning={isLoading}>
-    //   {previewAvailable ? (
-    //     <EyeOutlined spin={isLoading} style={{ color: 'red' }} />
-    //   ) : (
-    //     <EyeInvisibleOutlined style={{ color: 'red' }} />
-    //   )}
-    //   {/* <EyeInvisibleOutlined spin={isLoading} /> */}
-    // </Spin>
   );
 };
 const MemoizedPreviewResult = memo(PreviewResult);
@@ -100,9 +90,6 @@ export const ArticlePreview = (props: ArticlePreviewProps) => {
           <MemoizedPreviewResult link={parseLink(content)} />
         </Link>
         <span className={s['author']}>{stripUsername(author)}</span>
-        {/* <Link href={link}>
-        <code>{id}</code>
-	</Link> */}
         <time dateTime={pubDate}>
           Published: {new Date(pubDate).toLocaleDateString()}
         </time>

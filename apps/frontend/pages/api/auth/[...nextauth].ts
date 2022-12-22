@@ -4,14 +4,12 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 export const authOptions: AuthOptions = {
   callbacks: {
     async session({ session, user, token }) {
-      //   console.log('token: ', token);
       if (token) {
         session.user = token;
       }
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      //   console.log('token, user, account, profile, isNewUser: ', token);
       if (user) {
         return {
           ...user,
@@ -25,21 +23,9 @@ export const authOptions: AuthOptions = {
     strategy: 'jwt',
     maxAge: 3600, // 1 hour
   },
-  //   jwt: {
-  //     // The maximum age of the NextAuth.js issued JWT in seconds.
-  //     // Defaults to `session.maxAge`.
-  //     // You can define your own encode/decode functions for signing and encryption
-  //     // async encode() {},
-  //     // async decode() {},
-  //   },
+
   // Configure one or more authentication providers
   providers: [
-    // GithubProvider({
-    //   clientId: process.env.GITHUB_ID,
-    //   clientSecret: process.env.GITHUB_SECRET,
-    // }),
-    // ...add more providers here
-
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
       name: 'Credentials',
@@ -63,9 +49,7 @@ export const authOptions: AuthOptions = {
           body: JSON.stringify(credentials),
           headers: { 'Content-Type': 'application/json' },
         });
-        // console.log('res: ', res);
         const response = await res.json();
-        // console.log('user: ', response);
 
         const protectedRoute = await fetch(
           'http://localhost:3002/api/protected',
@@ -81,7 +65,6 @@ export const authOptions: AuthOptions = {
         const protectedRouteResponse = await protectedRoute.json();
         // If no error and we have user data, return it
         if (res.ok && response) {
-          //   console.log('protectedRouteResponse: ', protectedRouteResponse);
           return {
             id: protectedRouteResponse.userId,
             username: protectedRouteResponse.username,

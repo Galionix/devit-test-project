@@ -18,13 +18,8 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
-  // enable cors
-  //   const corsOptions = {
-  //     origin: 'http://localhost:3000',
-  //     credentials: true, // <-- REQUIRED backend setting
-  //   };
-  //   app.use(cors(corsOptions));
-  const globalPrefix = 'api';
+
+	const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
 
   await app.init();

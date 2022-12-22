@@ -8,11 +8,9 @@ export interface ClientDisplayPostsProps {}
 export function ClientDisplayPosts(props: ClientDisplayPostsProps) {
   const { status } = useFoundPostsStore();
   const { posts } = status;
-  console.log('posts: ', posts);
   if (!posts) return null;
   return (
     <div className={styles['container']}>
-      {/* <pre>{JSON.stringify(status, null, 2)}</pre> */}
       {posts &&
         posts.map((post, index) => (
           <ArticlePreview {...post} key={`${post.id} ${index}`} />

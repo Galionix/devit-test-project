@@ -1,5 +1,5 @@
+import { ArticleType, ILoginResponse } from '@devit-test-project/library';
 import {
-  Body,
   Controller,
   Get,
   Post,
@@ -7,16 +7,10 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { PostProducerService } from './queueProducers/post.producer.service';
-import { AppService } from './app.service';
-import { ArticleType } from '@devit-test-project/library';
-import { User, UserBasicInfo } from '@devit-test-project/library';
-import { LocalAuthGuard } from './auth/local-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
-import { ILoginResponse } from '@devit-test-project/library';
-
-
+import { LocalAuthGuard } from './auth/local-auth.guard';
+import { PostProducerService } from './queueProducers/post.producer.service';
 @Controller()
 export class AppController {
   constructor(
@@ -42,10 +36,4 @@ export class AppController {
   getHello(@Request() req): string {
     return req.user;
   }
-  //   @Get('delete-file')
-  //   async deleteFile(@Query('fileName') filename: string) {
-  //     console.log('filename: ', filename);
-  //     await this.fileProducerService.deleteFile(filename);
-  //     return `${filename} - deleted`;
-  //   }
 }

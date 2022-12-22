@@ -1,8 +1,8 @@
 import {
   CloseCircleOutlined,
   EditOutlined,
-  SearchOutlined,
   EyeOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { gql, useMutation, useQuery } from '@apollo/client';
 import {
@@ -31,7 +31,6 @@ import { useFoundPostsStore } from '../search-bar/post-search.store';
 import UpadtePostModal from '../upadte-post-modal/upadte-post-modal';
 import styles from './admin-display-posts.module.scss';
 
-// const POST_DISPLAY_QUERY = 'POST_DISPLAY_QUERY';
 const QUERY = ({
   pageSize,
   current,
@@ -85,9 +84,6 @@ interface TableParams {
 
 export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
   const { status } = useFoundPostsStore();
-  // const [loading, setLoading] = useState(false);
-
-  //   const [data, setData] = useState<ArticleType[]>();
   const [tableParams, setTableParams] = useState<TableParams>({
     pagination: {
       showSizeChanger: true,
@@ -166,8 +162,6 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
             handleSearch(selectedKeys as string[], confirm, dataIndex)
           }
           style={{ marginBottom: 8, display: 'block' }}
-          //   allowClear
-          //   handleReset={() => clearFilters && handleReset(clearFilters)}
         />
         <Space>
           <Button
@@ -177,71 +171,19 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
           >
             Reset
           </Button>
-          {/*  <Button
-            type="primary"
-            onClick={() =>
-              handleSearch(selectedKeys as string[], confirm, dataIndex)
-            }
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Search
-          </Button>
-          <Button
-            onClick={() => clearFilters && handleReset(clearFilters)}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Reset
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({ closeDropdown: false });
-              setSearchText((selectedKeys as string[])[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              close();
-            }}
-          >
-            close
-          </Button>*/}
         </Space>
       </div>
     ),
     filterIcon: (filtered: boolean) => (
       <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
-    // onFilter: (value, record) =>
-    //   record[dataIndex]
-    //     .toString()
-    //     .toLowerCase()
-    //     .includes((value as string).toLowerCase()),
+
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
         setTimeout(() => searchInput.current?.select(), 100);
       }
     },
     render: (text) => stripUsername(text),
-    //   searchedColumn === dataIndex ? (
-    //     <Highlighter
-    //       highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
-    //       searchWords={[searchText]}
-    //       autoEscape
-    //       textToHighlight={text ? text.toString() : ''}
-    //     />
-    //   ) : (
-    //     text
-    //   ),
   });
 
   const columns = [
@@ -255,10 +197,6 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
             <Space direction="horizontal">
               <Button
                 onClick={() => {
-                  console.log({
-                    record,
-                    open: true,
-                  });
                   const { __typename, ...rest } = record as any;
                   setPostToUpdate(rest);
                   setUpdatePostModalOpen(true);
@@ -268,25 +206,19 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
               <Popconfirm
                 placement="right"
                 title={'Are you sure to delete this post?'}
-                // description="Delete post"
                 okButtonProps={{ loading: removePostLoading }}
                 onConfirm={() => onPostRemove(record.id)}
                 okText="Yes"
                 cancelText="No"
               >
-                <Button
-                  //   loading={removePostLoading}
-                  icon={<CloseCircleOutlined />}
-                />
+                <Button icon={<CloseCircleOutlined />} />
               </Popconfirm>
               <Button
                 icon={<EyeOutlined />}
                 onClick={() => {
                   window.open(`/post/${record.id}`, '__blank');
                 }}
-              >
-                {/* <Link href={`/posts/${record.id}`}>View</Link> */}
-              </Button>
+              ></Button>
             </Space>
           </>
         );
@@ -318,19 +250,6 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       ...getColumnSearchProps('title'),
     },
   ];
-  console.log('total:', tableParams);
-
-  // const handlePaginationChange = (page: number, pageSize?: number) => {
-  // 	setTableParams({
-  // 		...tableParams,
-  // 		pagination: {
-  // 			...tableParams.pagination,
-  // 			current: page,
-  // 			pageSize: pageSize,
-  // 		},
-  // 	});
-  // };
-  const { posts } = status;
 
   const handleTableChange = (
     pagination: TablePaginationConfig,
@@ -342,45 +261,7 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       filters,
       ...sorter,
     });
-
-    // `dataSource` is useless since `pageSize` changed
-    // if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-    //   setData([]);
-    // }
   };
-  //   const getRandomuserParams = (params: TableParams) => ({
-  //     results: params.pagination?.pageSize,
-  //     page: params.pagination?.current,
-  //     ...params,
-  //   });
-
-  //   const fetchData = () => {
-  //     // setLoading(true);
-  //     console.log(tableParams);
-  //     // fetch(
-  //     //   `https://randomuser.me/api?${qs.stringify(
-  //     //     getRandomuserParams(tableParams)
-  //     //   )}`
-  //     // )
-  //     //   .then((res) => res.json())
-  //     //   .then(({ results }) => {
-  //     //     setData(results);
-  //     //     setLoading(false);
-  //     //     setTableParams({
-  //     //       ...tableParams,
-  //     //       pagination: {
-  //     //         ...tableParams.pagination,
-  //     //         total: 200,
-  //     //         // 200 is mock data, you should read it from server
-  //     //         // total: data.totalCount,
-  //     //       },
-  //     //     });
-  //     //   });
-  //   };
-
-  //   useEffect(() => {
-  //     fetchData();
-  //   }, [JSON.stringify(tableParams)]);
 
   const searchInput = useRef<InputRef>(null);
 
@@ -401,8 +282,6 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
 
   return (
     <div className={styles['container']}>
-      {/* <pre>{JSON.stringify({ searchedColumn, searchText }, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <UpadtePostModal
         open={updatePostModalOpen}
         setOpen={setUpdatePostModalOpen}
@@ -420,13 +299,6 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
           y: 500,
         }}
       />
-      {/* <pre>{JSON.stringify(posts, null, 2)}</pre> */}
-
-      {/* <pre>{JSON.stringify(status, null, 2)}</pre> */}
-      {/* {posts &&
-        posts.map((post, index) => (
-          <ArticlePreview {...post} key={`${post.id} ${index}`} />
-        ))} */}
     </div>
   );
 }

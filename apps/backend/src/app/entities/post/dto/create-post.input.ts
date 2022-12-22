@@ -13,9 +13,6 @@ export type Article = {
 */
 @InputType('create_post_input')
 export class CreatePostInput {
-  // @Field()
-  // order: number;
-
   @Field()
   title: string;
 

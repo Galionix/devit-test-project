@@ -1,20 +1,14 @@
+import { CaretLeftOutlined } from '@ant-design/icons';
 import { gql, useQuery } from '@apollo/client';
-import { ArticleType, stripUsername } from '@devit-test-project/library';
-import client from '../../apollo-client';
+import { stripUsername } from '@devit-test-project/library';
+import { Button } from 'antd';
 import { useRouter } from 'next/router';
-import Footer from '../../components/footer/footer';
-import Header from '../../components/header/header';
+import Iframe from 'react-iframe';
+import { HeadComponent } from '../../components/head/head';
 import DefaultLayout from '../../layouts/default-layout/default-layout';
 import s from './[id].module.scss';
-import Iframe from 'react-iframe';
-import { Button } from 'antd';
-import { CaretLeftOutlined } from '@ant-design/icons';
-import { HeadComponent } from '../../components/head/head';
 
 export const parseLink = (content: string) => {
-  // const highlightedLinks = content.replaceAll('<a', `
-  // <a`);
-
   const links = content.split('<a');
 
   const parsedLinks = links.map((link) => {

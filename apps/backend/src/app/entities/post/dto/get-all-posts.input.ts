@@ -1,6 +1,5 @@
-/* eslint-disable @nrwl/nx/enforce-module-boundaries */
-import { Field, InputType } from '@nestjs/graphql';
 import { ISearchOptions } from '@devit-test-project/library';
+import { Field, InputType } from '@nestjs/graphql';
 
 @InputType('get_all_posts_input')
 export class GetAllPostsInput implements Partial<ISearchOptions> {

@@ -1,26 +1,13 @@
+import { ISearchOptions } from '@devit-test-project/library';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostEntity } from '../post.entity';
 import { Repository } from 'typeorm';
+import { PostPaginationEntity } from '../post-pagination.entity';
+import { PostEntity } from '../post.entity';
 import { CreatePostInput } from './dto/create-post.input';
-import { UpdatePostInput } from './dto/update-post.input';
-import { Article } from '../../../types/article.type';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { GetAllPostsInput } from './dto/get-all-posts.input';
 import { GetPostByIdInput } from './dto/get-post-by-id.input';
-import { ISearchOptions } from '@devit-test-project/library';
-import { PostPaginationEntity } from '../post-pagination.entity';
-
-// export interface ISearchOptions{
-// 	limit: number
-// 	offset: number
-
-// 	sortBy: keyof Article;
-
-// 	sortDirection: 'ASC' | 'DESC'
-
-// 	searchText: string
-// }
+import { UpdatePostInput } from './dto/update-post.input';
 
 const defaultSearchOptions: ISearchOptions = {
   pageSize: 25,
@@ -46,46 +33,16 @@ export class PostService {
     if (exists) {
       throw new Error('Post already exists');
     }
-    // const post = this.postRepository.create(createPostInput);
     return await this.postRepository.save({ ...createPostInput });
   }
 
-  // create(createPostInput: CreatePostInput) {
-  //   return 'This action adds a new post';
-  // }
-
-  // findAll() {
-  //   return `This action returns all post`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} post`;
-  // }
-
-  // update(id: number, updatePostInput: UpdatePostInput) {
-  //   return `This action updates a #${id} post`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} post`;
-  // }
-
   async getLatest(): Promise<PostEntity> {
-    const res = await this.postRepository
-      // .query('SELECT * FROM posts ORDER BY posts.pubDate DESC LIMIT 1')
-      .query('SELECT * FROM "posts" ORDER BY "pubDate" desc LIMIT 1');
+    const res = await this.postRepository.query(
+      'SELECT * FROM "posts" ORDER BY "pubDate" desc LIMIT 1'
+    );
     console.log('res: ', res);
 
     return res[0];
-
-    // .select()
-    // .se
-    //   .findOne({
-    //     where: { },
-    //     order: {
-    //       pubDate: 'DESC',
-    //     },
-    // })
   }
 
   async getOnePost(input: GetPostByIdInput): Promise<PostEntity> {
@@ -146,13 +103,10 @@ export class PostService {
       next,
       prev,
     };
-
-    // return await this.postRepository.find();
   }
 
   async removePost(id: string) {
     await this.postRepository.delete({ id });
-    //   await this.postRepository.save();
 
     return { id };
   }

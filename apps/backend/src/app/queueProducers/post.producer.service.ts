@@ -1,7 +1,7 @@
+import { ArticleType } from '@devit-test-project/library';
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bull';
-import { ArticleType } from '@devit-test-project/library';
 
 const logger = new Logger('PostProducerService');
 

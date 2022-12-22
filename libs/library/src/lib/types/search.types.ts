@@ -1,5 +1,3 @@
-import { ArticleType } from './article.type';
-
 export interface ISearchOptions {
   current: number;
   pageSize: number;

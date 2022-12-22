@@ -1,57 +1,16 @@
-import { useEffect } from 'react';
-import DefaultLayout from '../../layouts/default-layout/default-layout';
-import styles from './index.module.scss';
-import LoginButton from '../../components/login-button/login-button';
+import { gql } from '@apollo/client';
+import { ArticleType } from '@devit-test-project/library';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { Table, message } from 'antd';
-import AddPostModal from '../../components/add-post-modal/add-post-modal';
-import { useAuthorizedRequest } from '../../hooks/useServerRequest';
-import { HeadComponent } from '../../components/head/head';
+import { useEffect } from 'react';
 import client from '../../apollo-client';
-import { gql, useMutation } from '@apollo/client';
-import { ArticleType } from '@devit-test-project/library';
-import { SearchBar } from '../../components/search-bar/search-bar';
+import AddPostModal from '../../components/add-post-modal/add-post-modal';
 import AdminDisplayPosts from '../../components/admin-display-posts/admin-display-posts';
-
-const dataSource = [
-  {
-    key: '1',
-    name: 'Mike',
-    age: 32,
-    address: '10 Downing Street',
-  },
-  {
-    key: '2',
-    name: 'John',
-    age: 42,
-    address: '10 Downing Street',
-  },
-];
-
-const columns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-];
-type TSortDirection = 'ASC' | 'DESC';
-
-interface IQueryProps {
-  searchTitle: string;
-  sortDirection: TSortDirection;
-}
+import { HeadComponent } from '../../components/head/head';
+import LoginButton from '../../components/login-button/login-button';
+import { useAuthorizedRequest } from '../../hooks/useServerRequest';
+import DefaultLayout from '../../layouts/default-layout/default-layout';
+import styles from './index.module.scss';
 
 export async function getStaticProps() {
   const { data } = await client.query({
@@ -92,17 +51,8 @@ export function Admin(props: AdminProps) {
 
   const data = useAuthorizedRequest('protected', 'GET', {});
 
-  //   const [messageApi, contextHolder] = message.useMessage();
-
   useEffect(() => {
-    console.log('session.status: ', session.status);
     if (session.status !== 'authenticated') {
-      //   messageApi.open({
-      //     type: 'warning',
-      //     content: 'You logged out or session expired',
-      //     duration: 30,
-      //   });
-
       router.push('/login');
     }
   }, [router, session.status]);
@@ -116,22 +66,16 @@ export function Admin(props: AdminProps) {
     );
   }
 
-  console.log('session.status: ', session.status);
   return (
     <DefaultLayout>
       <HeadComponent title="Admin Page" />
-      {/* {contextHolder} */}
       <div className={styles['toolbar']}>
         <AddPostModal />
         <LoginButton />
       </div>
       <div className={styles['container']}>
-        {/* <h1>Welcome to Admin!</h1> */}
-        {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
-        {/* <SearchBar initialPosts={props.posts} /> */}
         <AdminDisplayPosts />
       </div>
-      {/* <Table dataSource={dataSource} columns={columns} /> */}
     </DefaultLayout>
   );
 }

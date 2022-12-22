@@ -1,5 +1,3 @@
-
-// import Parser from 'rss-parser';
 import { ArticleType } from '@devit-test-project/library';
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
@@ -9,11 +7,6 @@ import { PostService } from '../entities/post/post.service';
 const logger = new Logger('PostConsumerService');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Parser = require('rss-parser');
-
-// interface IPopulatedArticle extends Omit<Article,"isoDate"|"pubDate">{
-//   isoDate: Date;
-//   pubDate: Date;
-// }
 
 const getLatestDate = (articles: ArticleType[]) => {
   const articlesDates = articles.map((article) => new Date(article.isoDate));
@@ -49,7 +42,6 @@ const processArticles = (
       };
       const exists = await postService.getOnePost(withPopulatedDates)[0];
       logger.log('exists: ', exists);
-      //   const exists = !!(await postService.getOnePost(withPopulatedDates));
       if (!exists) {
         logger.log('Creating new post: ', withPopulatedDates.title, '...');
         await postService.create(withPopulatedDates);
@@ -81,22 +73,11 @@ const processArticles = (
 
 export const parseRss = async (): Promise<ArticleType[]> => {
   const parser = new Parser();
-  // {
-  // customFields: {
-  //   feed: ['otherTitle', 'extendedDescription'],
-  //   item: ['coAuthor','subtitle'],
-  // }
-  // }
 
   const feed = await parser.parseURL(
     'https://www.reddit.com/r/programming/.rss'
   );
-  // const feed = await parser.parseString(redditProgrammingRss);
-  //
 
-  // feed.items.forEach((item) => {
-  //
-  // })
   return feed.items as ArticleType[];
 };
 
@@ -120,10 +101,6 @@ export class PostConsumer {
       logger.verbose('this.newestDate: ', this.newestDate);
 
       const articles = await parseRss();
-      // const dates = articles.map((article) => article.isoDate);
-
-      // const latestPost = await this.postService.getLatest();
-      //
 
       this.newestDate = processArticles(
         this.postService,

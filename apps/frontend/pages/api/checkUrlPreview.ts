@@ -1,11 +1,9 @@
 export default async function handler(req, res) {
-  //   console.log('req.body.url: ', req.body.url);
   const { url } = req.body;
   const myRequest = new Request(url);
 
   const response = await fetch(myRequest, {
     method: 'HEAD',
-    // mode: 'no-cors',
   }).then((response) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //   @ts-ignore
@@ -27,15 +25,7 @@ export default async function handler(req, res) {
       url,
       available: true,
     };
-    // console.log(...response.headers);
-    // return response;
   });
-  //   const headers = response.headers
 
   res.status(200).json(response);
-  // return {
-  // 	url,
-  // 	available:
-  // 	response.status === 200
-  // };
 }

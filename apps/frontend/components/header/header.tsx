@@ -1,4 +1,3 @@
-import LoginButton from '../login-button/login-button';
 import Link from 'next/link';
 import styles from './header.module.scss';
 

@@ -1,13 +1,12 @@
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { ApolloError, gql, useQuery } from '@apollo/client';
 import { ArticleType } from '@devit-test-project/library';
-import { memo, useEffect, useMemo, useState } from 'react';
-import s from './search-bar.module.scss';
+import { Result, Typography } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
 import { useDebounce } from 'react-use';
-import { useFoundPostsStore } from './post-search.store';
-import { ArticlePreview } from '../article/article';
-import { Button, Result, Space, Spin, Typography } from 'antd';
-import { CloseCircleOutlined } from '@ant-design/icons';
 import { HeadComponent } from '../head/head';
+import { useFoundPostsStore } from './post-search.store';
+import s from './search-bar.module.scss';
 
 const { Paragraph, Text } = Typography;
 
@@ -66,8 +65,6 @@ export function SearchBar(props: SearchBarProps) {
     status: searchStatus,
   } = useFoundPostsStore();
 
-  console.log('status: ', searchStatus);
-
   const { searchAuthor, searchTitle } = searchStatus;
   const [open, setOpen] = useState(false);
 
@@ -85,29 +82,7 @@ export function SearchBar(props: SearchBarProps) {
       searchAuthor: '',
       sortDirection: debouncedSortDirection,
     })
-    //   ,
-    // {
-    //   onCompleted: () => {
-    //     console.log('data?.posts: ', data);
-    //     setPrevLoadedPosts(data?.posts);
-    //   },
-    // }
-    //   , {
-    // 	skip:
-    // }
   );
-
-  //   const { onSearch } = props;
-
-  //   setStatus &&
-  //     setStatus({
-  //       posts: debouncedSearch === '' || search === '' ? [] : data?.posts,
-  //       loading:
-  //         loading ||
-  //         (search !== debouncedSearch && search !== '') ||
-  //         sortDirection !== debouncedSortDirection,
-  //       error,
-  //     });
 
   const [, cancel] = useDebounce(
     () => {
@@ -118,24 +93,10 @@ export function SearchBar(props: SearchBarProps) {
     [searchQueryTitle, sortDirection]
   );
 
-  //   const searched = debouncedSearch === '' || search === '';
-
-  //   useEffect(() => {
-  //     console.log(prevLoadedPosts);
-  //   }, []);
-
   useEffect(() => {
-    // FIXME: if we search every time from an empty,
-    // this shows previously loaded results from another query in loading state
     if (debouncedSearchQueryTitle !== '') {
       setPrevLoadedPosts(data?.posts?.posts);
     }
-    // else {
-    //   setPrevLoadedPosts(initialPosts);
-    // }
-    //   return () => {
-    // 	second
-    //   }
   }, [data?.posts?.posts, setPrevLoadedPosts, debouncedSearchQueryTitle]);
 
   const generalLoading =
@@ -147,12 +108,6 @@ export function SearchBar(props: SearchBarProps) {
     () => ({
       searchTitle: debouncedSearchQueryTitle,
       searchAuthor: '',
-      //   posts:
-      //     prevLoadedPosts.length > 0 && loading
-      //       ? prevLoadedPosts
-      //       : !loading
-      //       ? data?.posts
-      //       : initialPosts,
       posts: generalLoading
         ? prevLoadedPosts
         : searchQueryTitle === ''
@@ -173,10 +128,8 @@ export function SearchBar(props: SearchBarProps) {
   );
 
   useEffect(() => {
-    console.log('status: ', status);
     setStatus && setStatus(status);
   }, [status, setStatus]);
-  //   setStatus(status);
 
   return (
     <div className={s['container']}>
@@ -209,7 +162,6 @@ export function SearchBar(props: SearchBarProps) {
             id=""
             value={sortDirection}
             onChange={(e) => {
-              console.log(e.target.value);
               setSortDirection(e.target.value as TSortDirection);
             }}
           >
@@ -218,7 +170,6 @@ export function SearchBar(props: SearchBarProps) {
           </select>
         </section>
       )}
-      {/* {status.loading && <Spin size="large" />} */}
       {status.error && (
         <Result status="error" title="Search Failed" subTitle={error?.message}>
           <div className="desc">
@@ -239,26 +190,6 @@ export function SearchBar(props: SearchBarProps) {
           </div>
         </Result>
       )}
-
-      {/* {searched && <span>Showing pre-rendered results</span>}
-      {search !== '' && !status.loading && <span>Showing search results</span>} */}
-      {/* <pre>
-        {(loading ||
-          (search !== debouncedSearch && search !== '') ||
-          sortDirection !== debouncedSortDirection) &&
-          'Loading...'}
-        {error && 'Error'} */}
-      {/* {JSON.stringify(
-          debouncedSearch === '' || search === '' ? [] : data?.posts,
-          null,
-          2
-        )} */}
-      {/* {status.posts &&
-        status.posts.map((post) => <ArticlePreview {...post} key={post.id} />)} */}
-      {/* </pre>
-       */}
     </div>
   );
 }
-
-// export const MemoizedSearchBar = memo(SearchBar);

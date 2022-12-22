@@ -1,4 +1,3 @@
-import styles from './head.module.scss';
 import Head from 'next/head';
 
 /* eslint-disable-next-line */

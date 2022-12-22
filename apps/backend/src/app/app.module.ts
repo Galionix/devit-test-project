@@ -1,41 +1,24 @@
-import { BullModule } from '@nestjs/bull';
-import { Module, CacheModule, CacheInterceptor } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ScheduleModule } from '@nestjs/schedule';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-// import { FileProducerService } from 'src/producers/file.producer.service';
-// import { FileConsumer } from 'src/consumers/file.consumer';
-import { TypeOrmModule } from '@nestjs/typeorm';
-// import { PostEntity } from 'src/post/entities/post.entity';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { BullModule } from '@nestjs/bull';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/cacheControl';
+import responseCachePlugin from 'apollo-server-plugin-response-cache';
+import { join } from 'path';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { PostEntity } from './entities/post.entity';
 import { PostModule } from './entities/post/post.module';
 import { PostConsumer } from './queueConsumers/post.consumer';
 import { PostProducerService } from './queueProducers/post.producer.service';
 import { UsersModule } from './users/users.module';
-import { AuthService } from './auth/auth.service';
-import { AuthModule } from './auth/auth.module';
-// import { JwtService } from '@nestjs/jwt';
-import responseCachePlugin from 'apollo-server-plugin-response-cache';
-import { ApolloServerPluginCacheControl } from 'apollo-server-core/dist/plugin/cacheControl';
-import { join } from 'path';
 
 @Module({
   imports: [
-    // BullModule.forRoot({
-    // 	redis: {
-    // 	  host: 'localhost',
-    // 	  port: 6379,
-    // 	},
-    //   }),
-    //   BullModule.registerQueue(
-    // 	{
-    // 	  name: 'posts-queue',
-    // 	},
-    //   ),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -43,7 +26,6 @@ import { join } from 'path';
         redis: {
           host: configService.get('BULL_REDIS_HOST'),
           port: configService.get('BULL_REDIS_PORT'),
-          //   password: configService.get('BULL_REDIS_PASSWORD'),
         },
       }),
     }),
@@ -70,10 +52,6 @@ import { join } from 'path';
       }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      //   cors: {
-      //     origin: 'http://localhost:3000',
-      //     credentials: true,
-      //   },
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
@@ -89,22 +67,11 @@ import { join } from 'path';
     PostModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: '.env'
     }),
     UsersModule,
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [
-    // FileConsumer,
-    // FileProducerService,
-    AppService,
-    PostProducerService,
-    PostConsumer,
-    // AuthService,
-  ],
-  // exports: [
-  //   BullModule, // <— this is important!
-  // ],
+  providers: [AppService, PostProducerService, PostConsumer],
 })
 export class AppModule {}

@@ -1,24 +1,7 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Column, Entity } from 'typeorm';
 import { PostEntity } from './post.entity';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
 
-/*
-export type Article = {
-    title: string;
-    link: string;
-    pubDate: string;
-    author: string;
-    content: string;
-    contentSnippet: string;
-    id: string;
-    isoDate: string;
-}
-*/
 @ObjectType('posts_pagination')
 @Entity('posts_pagination')
 export class PostPaginationEntity {

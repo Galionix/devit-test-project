@@ -11,3 +11,6 @@ docker:
 	docker-compose up
 
 dev: docker nx-serve
+
+build:
+	npm run build

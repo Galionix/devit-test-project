@@ -1,6 +1,6 @@
+import { Api } from '@devit-test-project/library';
 import { signOut, useSession } from 'next-auth/react';
 import useSWR from 'swr';
-import { Api } from '@devit-test-project/library';
 
 const apiUrl = 'http://localhost:3002/api/';
 export const useAuthorizedRequest: Api = (url, method, options) => {
@@ -31,10 +31,6 @@ export const useAuthorizedRequest: Api = (url, method, options) => {
     },
     { refreshInterval: 10000, refreshWhenHidden: true }
   );
-  console.log({
-    data,
-    error,
-  });
 
   return {
     data,
