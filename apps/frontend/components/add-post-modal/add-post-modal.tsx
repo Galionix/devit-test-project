@@ -99,6 +99,12 @@ export function AddPostModal(props: AddPostModalProps) {
   const session = useSession();
   console.log('session: ', session);
   const [createPost, result] = useMutation(CREATE_POST_MUTATION, {
+    context: {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session?.data?.user?.token}`,
+      },
+    },
     variables: {
       input: createPostData,
     },

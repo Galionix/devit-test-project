@@ -9,6 +9,8 @@ import { CacheControl } from 'nestjs-gql-cache-control';
 import { PostPaginationEntity } from '../post-pagination.entity';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 
 @Resolver(() => PostEntity)
 export class PostResolver {
@@ -58,6 +60,7 @@ export class PostResolver {
     return this.postService.getOnePost(input);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation((returns) => PostEntity, { nullable: true })
   @CacheControl({ inheritMaxAge: true })
   createPost(@Args('input') input: CreatePostInput) {
