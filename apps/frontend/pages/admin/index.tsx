@@ -9,13 +9,10 @@ import AddPostModal from '../../components/add-post-modal/add-post-modal';
 import { useAuthorizedRequest } from '../../hooks/useServerRequest';
 import { HeadComponent } from '../../components/head/head';
 import client from '../../apollo-client';
-import { gql } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { ArticleType } from '@devit-test-project/library';
 import { SearchBar } from '../../components/search-bar/search-bar';
 import AdminDisplayPosts from '../../components/admin-display-posts/admin-display-posts';
-
-
-
 
 const dataSource = [
   {

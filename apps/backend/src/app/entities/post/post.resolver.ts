@@ -67,12 +67,14 @@ export class PostResolver {
     return this.postService.create(input);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation((returns) => PostEntity, { nullable: true })
   @CacheControl({ inheritMaxAge: true })
   updatePost(@Args('input') input: UpdatePostInput) {
     return this.postService.updatePost(input);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation((returns) => PostEntity, {
     nullable: true,
   })

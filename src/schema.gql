@@ -20,14 +20,14 @@ type Query {
 }
 
 input UpdatePostInput {
-  author: String!
-  content: String!
-  contentSnippet: String!
+  author: String
+  content: String
+  contentSnippet: String
   id: String!
-  isoDate: DateTime!
-  link: String!
-  pubDate: DateTime!
-  title: String!
+  isoDate: DateTime
+  link: String
+  pubDate: DateTime
+  title: String
 }
 
 input create_post_input {

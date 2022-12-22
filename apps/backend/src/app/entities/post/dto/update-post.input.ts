@@ -6,24 +6,24 @@ export class UpdatePostInput extends PartialType(CreatePostInput) {
   @Field()
   id: string;
 
-  @Field()
-  title: string;
+  @Field({ nullable: true })
+  title?: string;
 
-  @Field()
-  link: string;
+  @Field({ nullable: true })
+  link?: string;
 
-  @Field()
-  pubDate: Date;
+  @Field({ nullable: true })
+  pubDate?: Date;
 
-  @Field()
-  author: string;
+  @Field({ nullable: true })
+  author?: string;
 
-  @Field()
-  content: string;
+  @Field({ nullable: true })
+  content?: string;
 
-  @Field()
-  contentSnippet: string;
+  @Field({ nullable: true })
+  contentSnippet?: string;
 
-  @Field()
-  isoDate: Date;
+  @Field({ nullable: true })
+  isoDate?: Date;
 }

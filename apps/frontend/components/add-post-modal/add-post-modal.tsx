@@ -8,15 +8,19 @@ import {
   Input,
   DatePicker,
   notification,
+  message,
 } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { ArticleType } from '@devit-test-project/library';
 import { gql, useMutation } from '@apollo/client';
+import { defaultTextRules, defaultTextAreaRules } from '../utils/reused';
 
 dayjs.extend(customParseFormat);
+
+const showFormat = 'YYYY-MM-DD HH:mm:ss';
 
 // const CREATE = ({
 //   id,
@@ -51,28 +55,8 @@ const CREATE_POST_MUTATION = gql`
   }
 `;
 // const CREATE =
-const defaultTextRules = [
-  {
-    min: 5,
-    message: 'Value should be at least 5 characters long',
-  },
-  {
-    max: 200,
-    message: 'Value should be at most 200 characters long',
-  },
-];
 
-const defaultTextAreaRules = [
-  {
-    min: 5,
-    message: 'Value should be at least 5 characters long',
-  },
-  {
-    max: 500,
-    message: 'Value should be at most 500 characters long',
-  },
-];
-const dateFormat = 'YYYY-MM-DD';
+const dateFormat = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 /*
 content
 :
@@ -99,6 +83,7 @@ export function AddPostModal(props: AddPostModalProps) {
   const session = useSession();
   console.log('session: ', session);
   const [createPost, result] = useMutation(CREATE_POST_MUTATION, {
+    refetchQueries: ['posts'],
     context: {
       headers: {
         'Content-Type': 'application/json',
@@ -110,6 +95,12 @@ export function AddPostModal(props: AddPostModalProps) {
     },
     onCompleted: () => {
       setIsModalOpen(false);
+    },
+    onError: (e) => {
+      if (e.message === 'Unauthorized') {
+        signOut();
+      }
+      message.error('Error updating post: ' + e.message);
     },
   });
 
@@ -227,7 +218,7 @@ export function AddPostModal(props: AddPostModalProps) {
           </Form.Item>
 
           <Form.Item label="Pub Date" name="pubDate">
-            <DatePicker showTime />
+            <DatePicker showTime format={showFormat} />
           </Form.Item>
 
           <Form.Item label="Author" name="author" rules={defaultTextAreaRules}>

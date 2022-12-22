@@ -1,14 +1,18 @@
 import { ArticlePreview } from '../article/article';
 import { useFoundPostsStore } from '../search-bar/post-search.store';
 import styles from './admin-display-posts.module.scss';
-import { Table } from 'antd';
+import { Button, Space, Table, message, Popconfirm } from 'antd';
 import { ArticleType, stripUsername } from '@devit-test-project/library';
 import { useEffect, useState } from 'react';
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
 import type { FilterValue, SorterResult } from 'antd/es/table/interface';
-import { gql, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { ISearchOptions } from '@devit-test-project/library';
+import { EditOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
+import UpadtePostModal from '../upadte-post-modal/upadte-post-modal';
 
+// const POST_DISPLAY_QUERY = 'POST_DISPLAY_QUERY';
 const QUERY = ({
   pageSize,
   current,
@@ -36,41 +40,17 @@ const QUERY = ({
     }
   }
 `;
+const REMOVE_POST_MUTATION = gql`
+  mutation removePost($id: String!) {
+    removePost(id: $id) {
+      id
+    }
+  }
+`;
 
 /* eslint-disable-next-line */
 export interface AdminDisplayPostsProps {}
 
-const columns = [
-  {
-    title: 'index',
-    dataIndex: 'index',
-    key: 'index',
-    render: (text: string, record: ArticleType, index: number) => index + 1,
-    width: 100,
-  },
-  {
-    title: 'id',
-    dataIndex: 'id',
-    key: 'id',
-    ellipsis: true,
-    width: 100,
-  },
-  {
-    title: 'author',
-    sorter: true,
-    dataIndex: 'author',
-    key: 'author',
-    width: 300,
-    render: (text: string) => <a>{stripUsername(text)}</a>,
-  },
-  {
-    title: 'title',
-    dataIndex: 'title',
-    sorter: true,
-    key: 'title',
-    ellipsis: true,
-  },
-];
 interface TableParams {
   pagination?: TablePaginationConfig;
   sortField?: string;
@@ -93,6 +73,13 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
     },
   });
 
+  const session = useSession();
+
+  const [postToUpdate, setPostToUpdate] = useState<ArticleType>(
+    {} as ArticleType
+  );
+  const [updatePostModalOpen, setUpdatePostModalOpen] = useState(false);
+
   const { data, loading, error } = useQuery(
     QUERY({
       sortBy: tableParams?.field,
@@ -101,9 +88,100 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       current: tableParams.pagination?.current,
     }),
     {
-      pollInterval: 1000,
+      pollInterval: 10000,
     }
   );
+  const [removePost, { loading: removePostLoading }] = useMutation(
+    REMOVE_POST_MUTATION,
+    {
+      context: {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.data?.user?.token}`,
+        },
+      },
+      refetchQueries: ['posts'],
+      onCompleted: () => {
+        message.success('Post removed');
+      },
+      onError: () => {
+        message.error('Error removing post');
+      },
+    }
+  );
+
+  const onPostRemove = (id: string) => {
+    removePost({
+      variables: {
+        id,
+      },
+    });
+  };
+
+  const columns = [
+    {
+      title: 'actions',
+      dataIndex: 'actions',
+      key: 'actions',
+      render: (text: string, record: ArticleType, index: number) => {
+        return (
+          <>
+            <Space direction="horizontal">
+              <Button
+                onClick={() => {
+                  console.log({
+                    record,
+                    open: true,
+                  });
+                  const { __typename, ...rest } = record as any;
+                  setPostToUpdate(rest);
+                  setUpdatePostModalOpen(true);
+                }}
+                icon={<EditOutlined />}
+              />
+              <Popconfirm
+                placement="right"
+                title={'Are you sure to delete this post?'}
+                // description="Delete post"
+                okButtonProps={{ loading: removePostLoading }}
+                onConfirm={() => onPostRemove(record.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button
+                  //   loading={removePostLoading}
+                  icon={<CloseCircleOutlined />}
+                />
+              </Popconfirm>
+            </Space>
+          </>
+        );
+      },
+      width: 100,
+    },
+    {
+      title: 'id',
+      dataIndex: 'id',
+      key: 'id',
+      ellipsis: true,
+      width: 100,
+    },
+    {
+      title: 'author',
+      sorter: true,
+      dataIndex: 'author',
+      key: 'author',
+      width: 300,
+      render: (text: string) => <a>{stripUsername(text)}</a>,
+    },
+    {
+      title: 'title',
+      dataIndex: 'title',
+      sorter: true,
+      key: 'title',
+      ellipsis: true,
+    },
+  ];
   console.log('total:', tableParams);
 
   // const handlePaginationChange = (page: number, pageSize?: number) => {
@@ -172,6 +250,12 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
     <div className={styles['container']}>
       {/* <pre>{JSON.stringify(tableParams, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+      <UpadtePostModal
+        open={updatePostModalOpen}
+        setOpen={setUpdatePostModalOpen}
+        post={postToUpdate}
+      />
+
       <Table
         dataSource={data ? data.posts.posts : []}
         columns={columns}
