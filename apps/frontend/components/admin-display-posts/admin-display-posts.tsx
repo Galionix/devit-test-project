@@ -1,16 +1,35 @@
-import { ArticlePreview } from '../article/article';
-import { useFoundPostsStore } from '../search-bar/post-search.store';
-import styles from './admin-display-posts.module.scss';
-import { Button, Space, Table, message, Popconfirm } from 'antd';
-import { ArticleType, stripUsername } from '@devit-test-project/library';
-import { useEffect, useState } from 'react';
-import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
-import type { FilterValue, SorterResult } from 'antd/es/table/interface';
+import {
+  CloseCircleOutlined,
+  EditOutlined,
+  SearchOutlined,
+  EyeOutlined,
+} from '@ant-design/icons';
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { ISearchOptions } from '@devit-test-project/library';
-import { EditOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import {
+  ArticleType,
+  ISearchOptions,
+  stripUsername,
+} from '@devit-test-project/library';
+import {
+  Button,
+  Input,
+  InputRef,
+  message,
+  Popconfirm,
+  Space,
+  Table,
+} from 'antd';
+import type { TablePaginationConfig } from 'antd/es/table';
+import type {
+  ColumnType,
+  FilterConfirmProps,
+  FilterValue,
+} from 'antd/es/table/interface';
 import { useSession } from 'next-auth/react';
+import { useRef, useState } from 'react';
+import { useFoundPostsStore } from '../search-bar/post-search.store';
 import UpadtePostModal from '../upadte-post-modal/upadte-post-modal';
+import styles from './admin-display-posts.module.scss';
 
 // const POST_DISPLAY_QUERY = 'POST_DISPLAY_QUERY';
 const QUERY = ({
@@ -18,10 +37,14 @@ const QUERY = ({
   current,
   sortBy = 'pubDate',
   sortDirection = 'ASC',
+  searchTitle = '',
+  searchAuthor = '',
 }: Partial<ISearchOptions>) => gql`
   query {
     posts(options: {
 		sortBy: "${sortBy}"
+		searchTitle: "${searchTitle}"
+		searchAuthor: "${searchAuthor}"
 		sortDirection: "${sortDirection}"
 		pageSize: ${pageSize}
 		current: ${current}
@@ -72,7 +95,8 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       pageSize: 10,
     },
   });
-
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
   const session = useSession();
 
   const [postToUpdate, setPostToUpdate] = useState<ArticleType>(
@@ -86,6 +110,8 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       sortDirection: tableParams?.order === 'ascend' ? 'ASC' : 'DESC',
       pageSize: tableParams.pagination?.pageSize,
       current: tableParams.pagination?.current,
+      searchTitle: searchedColumn === 'title' ? searchText : '',
+      searchAuthor: searchedColumn === 'author' ? searchText : '',
     }),
     {
       pollInterval: 10000,
@@ -117,6 +143,106 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       },
     });
   };
+
+  const getColumnSearchProps = (
+    dataIndex: keyof ArticleType
+  ): ColumnType<ArticleType> => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+      close,
+    }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() =>
+            handleSearch(selectedKeys as string[], confirm, dataIndex)
+          }
+          style={{ marginBottom: 8, display: 'block' }}
+          //   allowClear
+          //   handleReset={() => clearFilters && handleReset(clearFilters)}
+        />
+        <Space>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          {/*  <Button
+            type="primary"
+            onClick={() =>
+              handleSearch(selectedKeys as string[], confirm, dataIndex)
+            }
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({ closeDropdown: false });
+              setSearchText((selectedKeys as string[])[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>*/}
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+    // onFilter: (value, record) =>
+    //   record[dataIndex]
+    //     .toString()
+    //     .toLowerCase()
+    //     .includes((value as string).toLowerCase()),
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+    render: (text) => stripUsername(text),
+    //   searchedColumn === dataIndex ? (
+    //     <Highlighter
+    //       highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+    //       searchWords={[searchText]}
+    //       autoEscape
+    //       textToHighlight={text ? text.toString() : ''}
+    //     />
+    //   ) : (
+    //     text
+    //   ),
+  });
 
   const columns = [
     {
@@ -153,11 +279,19 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
                   icon={<CloseCircleOutlined />}
                 />
               </Popconfirm>
+              <Button
+                icon={<EyeOutlined />}
+                onClick={() => {
+                  window.open(`/post/${record.id}`, '__blank');
+                }}
+              >
+                {/* <Link href={`/posts/${record.id}`}>View</Link> */}
+              </Button>
             </Space>
           </>
         );
       },
-      width: 100,
+      width: 150,
     },
     {
       title: 'id',
@@ -173,6 +307,7 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       key: 'author',
       width: 300,
       render: (text: string) => <a>{stripUsername(text)}</a>,
+      ...getColumnSearchProps('author'),
     },
     {
       title: 'title',
@@ -180,6 +315,7 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       sorter: true,
       key: 'title',
       ellipsis: true,
+      ...getColumnSearchProps('title'),
     },
   ];
   console.log('total:', tableParams);
@@ -246,9 +382,26 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
   //     fetchData();
   //   }, [JSON.stringify(tableParams)]);
 
+  const searchInput = useRef<InputRef>(null);
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: (param?: FilterConfirmProps) => void,
+    dataIndex: keyof ArticleType
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void) => {
+    clearFilters();
+    setSearchText('');
+  };
+
   return (
     <div className={styles['container']}>
-      {/* <pre>{JSON.stringify(tableParams, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify({ searchedColumn, searchText }, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
       <UpadtePostModal
         open={updatePostModalOpen}

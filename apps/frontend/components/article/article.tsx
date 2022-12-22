@@ -32,12 +32,12 @@ const PreviewResult = ({ link }: { link: string }) => {
       ) : previewAvailable ? (
         <>
           <EyeOutlined style={{ color: 'white' }} />
-          <span>Preview available</span>
+          {/* <span>Preview available</span> */}
         </>
       ) : (
         <>
-          <EyeInvisibleOutlined style={{ color: 'red' }} />
-          <span>Preview not available</span>
+          <EyeInvisibleOutlined style={{ color: 'gray' }} />
+          {/* <span>Preview not available</span> */}
         </>
       )}
     </div>
@@ -72,7 +72,8 @@ interface ArticlePreviewProps extends ArticleType {
 export const ArticlePreview = (props: ArticlePreviewProps) => {
   const { id, title, author, content, pubDate, isoDate, link } = props;
   const { status } = useFoundPostsStore();
-  const { keyword, loading } = status;
+  const { searchAuthor, searchTitle, loading } = status;
+  const keyword = searchTitle || searchAuthor;
 
   const TitleComponent = keyword ? (
     <Link href={`/post/${id}`}>
@@ -98,7 +99,7 @@ export const ArticlePreview = (props: ArticlePreviewProps) => {
         <Link href={`/post/${id}`}>
           <MemoizedPreviewResult link={parseLink(content)} />
         </Link>
-        <span>{stripUsername(author)}</span>
+        <span className={s['author']}>{stripUsername(author)}</span>
         {/* <Link href={link}>
         <code>{id}</code>
 	</Link> */}

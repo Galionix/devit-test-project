@@ -121,9 +121,11 @@ export function Admin(props: AdminProps) {
     <DefaultLayout>
       <HeadComponent title="Admin Page" />
       {/* {contextHolder} */}
-      <AddPostModal />
-      <div className={styles['container']}>
+      <div className={styles['toolbar']}>
+        <AddPostModal />
         <LoginButton />
+      </div>
+      <div className={styles['container']}>
         {/* <h1>Welcome to Admin!</h1> */}
         {/* <pre>{JSON.stringify(session, null, 2)}</pre> */}
         {/* <SearchBar initialPosts={props.posts} /> */}
