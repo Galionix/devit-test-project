@@ -63,9 +63,12 @@ export class PostService {
   // }
 
   async getLatest(): Promise<PostEntity> {
-    return await this.postRepository
+    const res = await this.postRepository
       // .query('SELECT * FROM posts ORDER BY posts.pubDate DESC LIMIT 1')
       .query('SELECT * FROM "posts" ORDER BY "pubDate" desc LIMIT 1');
+    console.log('res: ', res);
+
+    return res[0];
 
     // .select()
     // .se
@@ -79,9 +82,10 @@ export class PostService {
 
   async getOnePost(input: GetPostByIdInput): Promise<PostEntity> {
     const { id } = input;
-    return await this.postRepository.findOne({
+    const res = await this.postRepository.findOne({
       where: { id },
     });
+	  return res;
   }
 
   async getAllPosts(options: GetAllPostsInput): Promise<PostPaginationEntity> {

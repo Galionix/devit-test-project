@@ -47,7 +47,7 @@ const processArticles = (
         pubDate: new Date(article.pubDate),
         isoDate: new Date(article.isoDate),
       };
-      const exists = await postService.getOnePost(withPopulatedDates)[0][0];
+      const exists = await postService.getOnePost(withPopulatedDates)[0];
       logger.log('exists: ', exists);
       //   const exists = !!(await postService.getOnePost(withPopulatedDates));
       if (!exists) {
