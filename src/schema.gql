@@ -7,10 +7,38 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Mutation {
+  createPost(input: create_post_input!): posts
+  removePost(id: String!): posts
+  updatePost(input: UpdatePostInput!): posts
+}
+
 type Query {
   getLatest: [posts!]
   getOnePost(input: get_post_by_id_input!): posts
   posts(options: get_all_posts_input!): posts_pagination!
+}
+
+input UpdatePostInput {
+  author: String!
+  content: String!
+  contentSnippet: String!
+  id: String!
+  isoDate: DateTime!
+  link: String!
+  pubDate: DateTime!
+  title: String!
+}
+
+input create_post_input {
+  author: String!
+  content: String!
+  contentSnippet: String!
+  id: String!
+  isoDate: DateTime!
+  link: String!
+  pubDate: DateTime!
+  title: String!
 }
 
 input get_all_posts_input {

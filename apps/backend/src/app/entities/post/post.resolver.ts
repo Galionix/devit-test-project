@@ -1,4 +1,4 @@
-import { Args, Int, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GetAllPostsInput } from './dto/get-all-posts.input';
 import { PostEntity } from '../post.entity';
 // import { PostType } from 'src/post/post.type';
@@ -7,6 +7,8 @@ import { PostService } from './post.service';
 import { GetPostByIdInput } from './dto/get-post-by-id.input';
 import { CacheControl } from 'nestjs-gql-cache-control';
 import { PostPaginationEntity } from '../post-pagination.entity';
+import { CreatePostInput } from './dto/create-post.input';
+import { UpdatePostInput } from './dto/update-post.input';
 
 @Resolver(() => PostEntity)
 export class PostResolver {
@@ -54,5 +56,27 @@ export class PostResolver {
   @CacheControl({ inheritMaxAge: true })
   getOnePost(@Args('input') input: GetPostByIdInput) {
     return this.postService.getOnePost(input);
+  }
+
+  @Mutation((returns) => PostEntity, { nullable: true })
+  @CacheControl({ inheritMaxAge: true })
+  createPost(@Args('input') input: CreatePostInput) {
+    return this.postService.create(input);
+  }
+
+  @Mutation((returns) => PostEntity, { nullable: true })
+  @CacheControl({ inheritMaxAge: true })
+  updatePost(@Args('input') input: UpdatePostInput) {
+    return this.postService.updatePost(input);
+  }
+
+  @Mutation((returns) => PostEntity, {
+    nullable: true,
+  })
+  @CacheControl({
+    inheritMaxAge: true,
+  })
+  removePost(@Args('id') id: string) {
+    return this.postService.removePost(id);
   }
 }

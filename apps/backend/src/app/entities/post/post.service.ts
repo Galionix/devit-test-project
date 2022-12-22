@@ -38,6 +38,14 @@ export class PostService {
     private readonly postRepository: Repository<PostEntity>
   ) {}
   async create(createPostInput: CreatePostInput) {
+    const exists = await this.postRepository.findOne({
+      where: {
+        id: createPostInput.id,
+      },
+    });
+    if (exists) {
+      throw new Error('Post already exists');
+    }
     // const post = this.postRepository.create(createPostInput);
     return await this.postRepository.save({ ...createPostInput });
   }
@@ -86,7 +94,7 @@ export class PostService {
       where: { id },
     });
     console.log(' getOnePost res: ', res);
-	  return res;
+    return res;
   }
 
   async getAllPosts(options: GetAllPostsInput): Promise<PostPaginationEntity> {
@@ -144,14 +152,16 @@ export class PostService {
 
   async removePost(id: string) {
     await this.postRepository.delete({ id });
-    return id;
+    //   await this.postRepository.save();
+
+    return { id };
   }
 
-  async updatePost(id: string, updatePostInput: UpdatePostInput) {
+  async updatePost(updatePostInput: UpdatePostInput) {
     const updated = await this.postRepository.update(
-      { id },
+      { id: updatePostInput.id },
       { ...updatePostInput }
     );
-    return updated.affected > 0 ? { id, ...updatePostInput } : null;
+    return updated.affected > 0 ? { ...updatePostInput } : null;
   }
 }

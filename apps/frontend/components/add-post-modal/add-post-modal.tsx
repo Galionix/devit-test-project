@@ -1,13 +1,56 @@
 import { useState } from 'react';
 import styles from './add-post-modal.module.scss';
-import { Modal, Button, Checkbox, Form, Input, DatePicker } from 'antd';
+import {
+  Modal,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  DatePicker,
+  notification,
+} from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useSession } from 'next-auth/react';
+import { ArticleType } from '@devit-test-project/library';
+import { gql, useMutation } from '@apollo/client';
 
 dayjs.extend(customParseFormat);
 
+// const CREATE = ({
+//   id,
+//   author,
+//   content,
+//   contentSnippet,
+//   isoDate,
+//   pubDate,
+//   title,
+//   link,
+// }: ArticleType) => gql`
+// mutation{
+// 	createPost(input:{
+// 	  id:"${id}",
+// 	  author:"${author}",
+// 	  content:"${content}",
+// 	  contentSnippet:"${contentSnippet}",
+// 	  isoDate:"${isoDate}",
+// 	  pubDate:"${pubDate}",
+// 	  title:"${title}",
+// 	  link:"${link}",
+// 	}){
+// 	  id
+// 	}
+//   }
+// `;
+const CREATE_POST_MUTATION = gql`
+  mutation createPost($input: create_post_input!) {
+    createPost(input: $input) {
+      id
+    }
+  }
+`;
+// const CREATE =
 const defaultTextRules = [
   {
     min: 5,
@@ -30,15 +73,39 @@ const defaultTextAreaRules = [
   },
 ];
 const dateFormat = 'YYYY-MM-DD';
+/*
+content
+:
+"&#32; submitted by &#32; <a href=\"https://www.reddit.com/user/TheSwedeheart\"> /u/TheSwedeheart </a> <br/> <span><a href=\"https://encore.dev/blog/preview-envs\">[link]</a></span> &#32; <span><a href=\"https://www.reddit.com/r/programming/comments/zsodzu/fullstack_preview_environments_for_speed_and/\">[comments]</a></span>"
+contentSnippet
+:
+"submitted by    /u/TheSwedeheart  \n [link]   [comments]"
 
+*/
+const createContent = (title: string, link: string, username: string) => ({
+  content: `&#32; submitted by &#32; <a href="https://www.reddit.com/user/${username}"> /u/${username} </a> <br/> <span><a href="${link}">[link]</a></span> &#32; <span><a href="https://www.reddit.com/r/programming/comments/">[comments]</a></span>`,
+  contentSnippet: `submitted by    /u/${username}  \n [link]   [comments]`,
+});
 /* eslint-disable-next-line */
 export interface AddPostModalProps {}
 
 export function AddPostModal(props: AddPostModalProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [createPostData, setCreatePostData] = useState<ArticleType>(
+    {} as ArticleType
+  );
 
+  console.log('createPostData: ', createPostData);
   const session = useSession();
   console.log('session: ', session);
+  const [createPost, result] = useMutation(CREATE_POST_MUTATION, {
+    variables: {
+      input: createPostData,
+    },
+    onCompleted: () => {
+      setIsModalOpen(false);
+    },
+  });
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -52,15 +119,43 @@ export function AddPostModal(props: AddPostModalProps) {
     setIsModalOpen(false);
   };
 
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const onFinish = (values: ArticleType) => {
+    // console.log(dayjs(values.pubDate).format());
+    const pubDate = dayjs(values.pubDate).format();
+    const content = createContent(values.title, values.link, values.author);
+    const res = {
+      ...values,
+      pubDate,
+      isoDate: pubDate,
+      ...content,
+    };
+    setCreatePostData(() => res);
+    createPost({
+      variables: {
+        input: res,
+      },
+    });
+    // console.log('result: ', res);
   };
 
   const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed:', errorInfo);
+    // console.log('Failed:', errorInfo);
+
+    notification.open({
+      message: 'Validation error',
+      description: `Please check the following fields: ${errorInfo.errorFields.map(
+        (field: any) => `${field.name}: ${field.errors[0]}`
+      )}`,
+
+      // <pre>{JSON.stringify(errorInfo.errorFields[0].name, null, 2)}</pre>
+      //   ),
+      //   onClick: () => {
+      //     console.log('Notification Clicked!');
+      //   },
+    });
   };
 
-  console.log(uuidv4());
+  //   console.log(uuidv4());
   return (
     <div className={styles['container']}>
       {/* <h1>Welcome to AddPostModal!</h1>
@@ -81,6 +176,9 @@ export function AddPostModal(props: AddPostModalProps) {
           name="basic"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 16 }}
+          //   onChange={(e) => console.log(e)}
+          //   onValuesChange={(e) => console.log(e)}
+          //   onFieldsChange={(e) => console.log(e)}
           initialValues={{
             id: uuidv4(),
             pubDate: dayjs(new Date().toISOString(), dateFormat),
@@ -111,7 +209,14 @@ export function AddPostModal(props: AddPostModalProps) {
             <Input size="large" placeholder="My post title" />
           </Form.Item>
 
-          <Form.Item label="Link" name="link" rules={defaultTextRules}>
+          <Form.Item
+            label="Link"
+            name="link"
+            rules={[
+              { required: true, message: 'Please input link' },
+              ...defaultTextRules,
+            ]}
+          >
             <Input />
           </Form.Item>
 
@@ -126,10 +231,8 @@ export function AddPostModal(props: AddPostModalProps) {
             <Button
               type="primary"
               htmlType="submit"
-              onClick={(e: any) => {
-                console.log('e: ', e);
-                console.log(dayjs(e.pubDate).format());
-              }}
+              loading={result.loading}
+              //   onClick={(e: any) => {}}
             >
               Create
             </Button>

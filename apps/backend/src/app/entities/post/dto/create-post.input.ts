@@ -11,7 +11,7 @@ export type Article = {
     isoDate: string;
 }
 */
-@InputType('posts')
+@InputType('create_post_input')
 export class CreatePostInput {
   // @Field()
   // order: number;
