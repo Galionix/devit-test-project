@@ -249,6 +249,12 @@ export function AdminDisplayPosts(props: AdminDisplayPostsProps) {
       ellipsis: true,
       ...getColumnSearchProps('title'),
     },
+    {
+      title: 'pubDate',
+      dataIndex: 'pubDate',
+      sorter: true,
+      key: 'pubDate',
+    },
   ];
 
   const handleTableChange = (

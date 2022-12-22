@@ -42,3 +42,5 @@ apps/backend/.env
 # Next.js
 .next
 redis-data/dump.rdb
+.env
+.gitignore

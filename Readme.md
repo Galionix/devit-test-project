@@ -1,4 +1,13 @@
+# Devit RSS Parser
 This project is a fullstack test project for devit company.
+
+backend parses RSS feeds and stores them in the database.
+
+The frontend divided to index page and admin page.
+
+The index page shows by default latest 25 posts from the database and allows search by title and sort by date. The admin page is for adding, updating and deleting RSS feeds to the database. Here you can search by title and author and sort by date.
+
+The admin page is protected by JWT authentication.
 
 Although it is a test project, I implemented many features that I have learned in the past few years.
 
