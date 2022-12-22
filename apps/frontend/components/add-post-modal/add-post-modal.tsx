@@ -64,6 +64,7 @@ export function AddPostModal(props: AddPostModalProps) {
   return (
     <div className={styles['container']}>
       {/* <h1>Welcome to AddPostModal!</h1>
+	  "&#32; submitted by &#32; <a href="https://www.reddit.com/user/signalbound"> /u/signalbound </a> <br/> <span><a href="https://mdalmijn.com/p/breaking-the-planning-death-cycle">[link]</a></span> &#32; <span><a href="https://www.reddit.com/r/programming/comments/zskelp/breaking_the_planning_death_cycle/">[comments]</a></span>"
        */}
       <Button onClick={showModal} type="primary">
         Add post
@@ -115,14 +116,21 @@ export function AddPostModal(props: AddPostModalProps) {
           </Form.Item>
 
           <Form.Item label="Pub Date" name="pubDate">
-            <DatePicker format={dateFormat} />
+            <DatePicker showTime />
           </Form.Item>
 
           <Form.Item label="Author" name="author" rules={defaultTextAreaRules}>
             <Input />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              onClick={(e: any) => {
+                console.log('e: ', e);
+                console.log(dayjs(e.pubDate).format());
+              }}
+            >
               Create
             </Button>
           </Form.Item>

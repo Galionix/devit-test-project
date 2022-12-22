@@ -46,17 +46,21 @@ const columns = [
     dataIndex: 'index',
     key: 'index',
     render: (text: string, record: ArticleType, index: number) => index + 1,
+    width: 100,
   },
   {
     title: 'id',
     dataIndex: 'id',
     key: 'id',
+    ellipsis: true,
+    width: 100,
   },
   {
     title: 'author',
     sorter: true,
     dataIndex: 'author',
     key: 'author',
+    width: 300,
     render: (text: string) => <a>{stripUsername(text)}</a>,
   },
   {
